@@ -1,0 +1,63 @@
+name = "my-awesome-worker"
+main = "src/index.js"
+compatibility_date = "2025-10-24" # Use the latest date for new projects
+workers_dev = true
+
+# Use ES Modules syntax and enable latest features
+[build]
+command = "npm run build" # Example for a custom build step
+# The compatibility date unlocks a consistent API and newer features.
+
+# --- KV Namespaces ---
+# This section defines your KV namespace bindings.
+# The `binding` is the name you use to access the KV from your worker code.
+# The `id` is the unique namespace ID.
+[[kv_namespaces]]
+binding = "MY_KV"
+id = "<YOUR_PRODUCTION_KV_NAMESPACE_ID>"
+# For local development, it's a best practice to use a separate preview namespace.
+# You can create this with the `wrangler kv:namespace create <name> --preview` command.
+preview_id = "<YOUR_PREVIEW_KV_NAMESPACE_ID>"
+
+# --- Durable Objects ---
+# This section defines your Durable Object bindings.
+# The `binding` is the name you use in your worker to get a DO stub.
+# The `class_name` corresponds to the name of your DO class in the worker code.
+[[durable_objects.bindings]]
+name = "MY_DURABLE_OBJECT"
+class_name = "MyDurableObject"
+
+# --- Environments ---
+# Define different configurations for different deployment environments.
+# This keeps your development, staging, and production settings separate.
+[env.production]
+name = "my-awesome-worker-prod"
+# KV namespace ID for production. This will override the top-level definition.
+# DO bindings are not inherited and must be defined per environment.
+[[env.production.kv_namespaces]]
+binding = "MY_KV"
+id = "<YOUR_PRODUCTION_KV_NAMESPACE_ID>"
+
+# Durable Object binding for production.
+[[env.production.durable_objects.bindings]]
+name = "MY_DURABLE_OBJECT"
+class_name = "MyDurableObject"
+
+# Variables can also be different for each environment.
+[env.production.vars]
+ENVIRONMENT = "production"
+
+# You can also add a staging environment.
+[env.staging]
+name = "my-awesome-worker-staging"
+
+[[env.staging.kv_namespaces]]
+binding = "MY_KV"
+id = "<YOUR_STAGING_KV_NAMESPACE_ID>"
+
+[[env.staging.durable_objects.bindings]]
+name = "MY_DURABLE_OBJECT"
+class_name = "MyDurableObject"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
