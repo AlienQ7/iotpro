@@ -1,18 +1,12 @@
 name = "iotpro" # Project name changed to 'iotpro'
 main = "src/index.js"
 compatibility_date = "2024-01-01"
-​We need modules enabled to use the clean import/export syntax
-​in our source files (e.g., import AUTH_HTML from './auth.html';)
+
 ​compatibility_flags = ["nodejs_compat", "html_rewriter"]
-​--- KV Namespace Bindings ---
-​This binds the KV Namespace "USERS" to the 'USERS' variable in your Worker's env object.
-​You must create this namespace first via the Cloudflare dashboard or CLI.
+
 ​[[kv_namespaces]]
 binding = "USERS"
-id = "YOUR_USERS_KV_ID" # IMPORTANT: Replace this placeholder with the actual ID after creation
-preview_id = "YOUR_USERS_KV_ID_PREVIEW" # IMPORTANT: Replace this placeholder for local development
-​--- Secrets and Variables ---
-​The JWT_SECRET must be set as a secret in your Worker's environment variables.
-​(e.g., using wrangler secret put JWT_SECRET)
-​It will be accessible via env.JWT_SECRET
-​Bindings = [JWT_SECRET, USERS]
+id = "e039131f60174ee6a7069d4c90349a06" 
+preview_id = "YOUR_USERS_KV_ID_PREVIEW" 
+
+​
