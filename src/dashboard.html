@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iotpro | Dashboard</title>
+    <!-- CSS is dynamically injected by the Worker for the dark theme -->
+    <!-- The dashboard client script will be loaded immediately after the body -->
+</head>
+<body class="bg-$BG text-$FG">
+    <div id="app-container" class="min-h-screen flex flex-col">
+        <!-- HEADER / NAVIGATION -->
+        <header class="bg-$BORDER border-b-2 border-$ACCENT_LOW p-4 shadow-lg sticky top-0 z-10">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-$ACCENT">iotpro Scheduler</h1>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- User ID Placeholder -->
+                    <span id="user-display" class="text-sm text-$FG opacity-80 italic">Loading User...</span>
+                    
+                    <button id="logout-button" 
+                        class="px-3 py-1 bg-$DARK_BURN hover:bg-$ACCENT transition duration-200 
+                                text-white text-sm font-semibold rounded-lg shadow-md focus:outline-none 
+                                focus:ring-2 focus:ring-$AMBER_ORANGE focus:ring-opacity-50">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-grow p-4 md:p-8 max-w-7xl w-full mx-auto">
+            <div id="notification-area" class="mb-6 space-y-3">
+                <!-- Notifications and loading messages will appear here -->
+            </div>
+
+            <div class="space-y-10">
+                <!-- 
+                    ==========================================
+                    SECTION 1: DEVICE MANAGEMENT
+                    ==========================================
+                -->
+                <section>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-3xl font-semibold text-$AMBER_ORANGE border-b border-$ACCENT pb-1">My Devices</h2>
+                        <button id="add-device-btn"
+                            class="px-4 py-2 bg-$ACCENT hover:bg-$DARK_BURN transition duration-200 
+                                    text-$BG font-bold rounded-lg shadow-lg focus:outline-none 
+                                    focus:ring-4 focus:ring-$AMBER_ORANGE focus:ring-opacity-50">
+                            + Add New Device
+                        </button>
+                    </div>
+                    
+                    <!-- Device Registration Form (Initially Hidden) -->
+                    <div id="add-device-form-container" class="hidden bg-$BORDER p-6 rounded-xl shadow-inner mb-6">
+                        <form id="add-device-form" class="space-y-4">
+                            <h3 class="text-xl font-medium text-$FG">Register Device</h3>
+                            <div>
+                                <label for="device-name" class="block text-sm font-medium text-$FG opacity-70 mb-1">Device Nickname (e.g., "Living Room Lamp")</label>
+                                <input type="text" id="device-name" required
+                                    class="w-full p-3 bg-$BG border border-$ACCENT_LOW rounded-lg text-$FG 
+                                        focus:ring-2 focus:ring-$ACCENT focus:border-$ACCENT transition"
+                                    placeholder="Enter a friendly name for your device">
+                            </div>
+                            <button type="submit" 
+                                class="w-full py-3 bg-$SUCCESS hover:bg-green-700 transition duration-200 
+                                        text-white font-bold rounded-lg shadow-lg focus:outline-none 
+                                        focus:ring-4 focus:ring-green-600 focus:ring-opacity-50">
+                                Register Device
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- List of Registered Devices -->
+                    <div id="device-list" class="space-y-4">
+                        <div class="p-4 bg-$BORDER rounded-lg shadow-md text-center text-lg text-$FG opacity-60">
+                            No devices registered yet. Click '+ Add New Device' to get started.
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-$ACCENT_LOW my-10">
+
+                <!-- 
+                    ==========================================
+                    SECTION 2: SCHEDULER MANAGEMENT
+                    ==========================================
+                -->
+                <section>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-3xl font-semibold text-$AMBER_ORANGE border-b border-$ACCENT pb-1">Schedules</h2>
+                        <button id="add-schedule-btn"
+                            class="px-4 py-2 bg-$ACCENT hover:bg-$DARK_BURN transition duration-200 
+                                    text-$BG font-bold rounded-lg shadow-lg focus:outline-none 
+                                    focus:ring-4 focus:ring-$AMBER_ORANGE focus:ring-opacity-50">
+                            + Create Schedule
+                        </button>
+                    </div>
+                    
+                    <!-- List of Schedules -->
+                    <div id="schedule-list" class="space-y-4">
+                        <div class="p-4 bg-$BORDER rounded-lg shadow-md text-center text-lg text-$FG opacity-60">
+                            No schedules defined. Add a device first, then create a schedule.
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <!-- FOOTER -->
+        <footer class="mt-8 p-4 text-center text-sm text-$FG opacity-50 border-t border-$ACCENT_LOW">
+            &copy; 2024 iotpro Scheduler. Powered by Cloudflare Workers & KV.
+        </footer>
+    </div>
+    
+    <!-- Dashboard Client Script -->
+    <script type="module" src="/dashboard-client.js"></script>
+    
+</body>
+</html>
+
