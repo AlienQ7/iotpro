@@ -2,9 +2,9 @@ name = "iotpro" # Project name changed to 'iotpro'
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
-​compatibility_flags = ["nodejs_compat", "html_rewriter"]
+​#compatibility_flags = ["nodejs_compat", "html_rewriter"]
 
-​[[kv_namespaces]]
+​#[[kv_namespaces]]
 binding = "USERS"
 id = "e039131f60174ee6a7069d4c90349a06" 
 preview_id = "YOUR_USERS_KV_ID_PREVIEW" 
