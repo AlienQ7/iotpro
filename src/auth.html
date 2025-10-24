@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Scheduler - Login / Register</title>
+    <!-- STYLE_INJECTION_POINT is replaced by the Worker with the full <style> tag -->
+    <!-- STYLE_INJECTION_POINT -->
+</head>
+<body>
+    <div class="auth-container">
+        
+        <div id="message-box" class="message" style="display: none;"></div>
+
+        <div id="login-view">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="email" id="login-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" placeholder="Password (Access Key)" required>
+                </div>
+                <button type="submit" class="auth-button">Login</button>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? <a href="#" id="show-signup">Register</a>
+                <br><br>
+                <a href="#" id="forgot-password">Forgot Password?</a>
+            </div>
+        </div>
+
+        <div id="signup-view">
+            <h2>Register</h2>
+            <form id="signup-form">
+                <div class="input-group">
+                    <input type="email" id="signup-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="signup-password" placeholder="Password (8+ chars, A-Z, !@#)" required>
+                </div>
+                <button type="submit" class="auth-button">Sign Up</button>
+            </form>
+            <div class="auth-footer">
+                Already have an account? <a href="#" id="show-login">Login</a>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- JS Modules loaded by the browser -->
+    <script type="module" src="./auth-client.js"></script>
+</body>
+</html>
+
