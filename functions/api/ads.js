@@ -1,7 +1,7 @@
 // /functions/api/ads.js
 export async function onRequest(context) {
   const { request, env } = context;
-  const db = env.DB;
+  const db = env.NDB;
   const url = new URL(request.url);
   const queryId = url.searchParams.get("id");
 
