@@ -6,9 +6,9 @@ compatibility_date = "2025-11-02"
 [[d1_databases]]
 binding = "NDB"
 database_name = "iotpro"
-database_id = "a948ab60-a672-4429-b6ee-eed6d0bad533"
+database_id = "b03ce1d7-c83e-4ab7-a636-fef9e345694c"
 
 # --- KV Namespace Binding (for caching / metadata) ---
 [[kv_namespaces]]
 binding = "USERS"
-id = "693ecc94f12c427d9440bee38f13112d"
+id = "5867a4f1be824058ae7365d1b20ed815"
