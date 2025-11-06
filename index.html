@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NagaSpace</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="index.css" />
+  <style>
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header-bar">
+    <div class="rank-display"><span class="rank-label">Naga</span><span class="rank-title">Space</span></div>
+  </header>
+
+  <!-- FLOATING MENU (top-right) -->
+  <div class="menu-wrapper">
+    <button id="hamburger" class="hamburger-icon">&#9776;</button>
+    <div id="dropdownMenu" class="dropdown-menu">
+      <button id="menuLogin">Login</button>
+      <a id="menuProfile" href="profile.html" style="display:none;">Profile</a>
+      <a href="#">About</a>
+      <button id="menuLogout" style="display:none;">Logout</button>
+    </div>
+  </div>
+
+  <!-- CATEGORY DRAWER -->
+  <div id="categoryDrawer" class="category-drawer">
+    <button class="category-close" id="closeCategory">&times;</button>
+    <h3>Categories</h3>
+    <ul id="categoryList">
+      <li>Cars</li><li>Hotel</li><li>Hostel</li><li>Mobile</li><li>Motorcycle</li>
+      <li>Tablets</li><li>TV</li><li>Shop</li><li>Rent</li><li>Restaurant</li><li>Others</li>
+    </ul>
+  </div>
+  <div id="overlay" class="overlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <main id="mainContent">  
+    <div class="search-bar">
+      <button id="categoryBtn" style="background:#fbbf24; border:none; padding:6px 10px; border-radius:5px; cursor:pointer;">Categories</button>
+      <input type="text" id="searchInput" placeholder="Search listings...">
+      <button id="searchBtn">🔍</button>
+    </div>
+    <h2>Latest Listings</h2>
+    <div id="publicAds" class="ads-container"><p>Loading public ads...</p></div>
+    <button class="load-more" id="loadMore">Load More</button>
+  </main>
+
+  <footer class="footer">
+    <p><a href="#" style="color:#fbbf24; margin-right:10px;">About</a> | <a href="#" style="color:#fbbf24;">Some List</a></p>
+    <p>&copy; 2025 NagaSpace</p>
+  </footer>
+
+  <!-- LOGIN MODAL -->
+  <div id="loginModal" class="modal">
+    <div class="modal-card">
+      <button id="closeLoginModal" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:22px; cursor:pointer;">&times;</button>
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+      <p style="text-align:center;margin-top:8px;">
+        <a href="forgot-password.html" style="color:#4af;">Forgot password?</a>
+      </p>
+      <p style="text-align:center;margin-top:6px;">Don’t have an account? <a href="signup.html" style="color:#4af;">Sign up</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const hamburger = document.getElementById("hamburger");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const categoryBtn = document.getElementById("categoryBtn");
+      const categoryDrawer = document.getElementById("categoryDrawer");
+      const closeCategory = document.getElementById("closeCategory");
+      const overlay = document.getElementById("overlay");
+      const mainContent = document.getElementById("mainContent");
+
+      // Drawer toggle
+      function openDrawer() {
+        categoryDrawer.classList.add("open");
+        overlay.classList.add("show");
+        mainContent.classList.add("shifted");
+      }
+      function closeDrawer() {
+        categoryDrawer.classList.remove("open");
+        overlay.classList.remove("show");
+        mainContent.classList.remove("shifted");
+      }
+      categoryBtn.addEventListener("click", openDrawer);
+      closeCategory.addEventListener("click", closeDrawer);
+      overlay.addEventListener("click", closeDrawer);
+
+      // Dropdown menu
+      hamburger.addEventListener("click", () => {
+        dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
+      });
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".menu-wrapper")) dropdownMenu.style.display = "none";
+      });
+
+      // Auth
+      const menuLogin = document.getElementById("menuLogin");
+      const menuLogout = document.getElementById("menuLogout");
+      const menuProfile = document.getElementById("menuProfile");
+      const loginModal = document.getElementById("loginModal");
+      const closeLoginModal = document.getElementById("closeLoginModal");
+      const loginForm = document.getElementById("loginForm");
+
+      function updateHeader() {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+          menuLogin.style.display = "none";
+          menuProfile.style.display = "block";
+          menuLogout.style.display = "block";
+        } else {
+          menuLogin.style.display = "block";
+          menuProfile.style.display = "none";
+          menuLogout.style.display = "none";
+        }
+      }
+      updateHeader();
+
+      menuLogin.addEventListener("click", () => { loginModal.style.display = "flex"; dropdownMenu.style.display = "none"; });
+      closeLoginModal.addEventListener("click", () => loginModal.style.display = "none");
+      loginModal.addEventListener("click", (e) => { if (e.target === loginModal) loginModal.style.display = "none"; });
+
+      menuLogout.addEventListener("click", () => {
+        localStorage.removeItem("user");
+        updateHeader();
+      });
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        try {
+          const res = await fetch("/api/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "login", email, password }),
+          });
+          const data = await res.json();
+          if (!res.ok) return alert(data.error || "Login failed");
+          localStorage.setItem("user", JSON.stringify(data.user));
+          loginModal.style.display = "none";
+          window.location.href = "profile.html";
+        } catch { alert("Network error."); }
+      });
+
+      // Load ads
+      async function loadPublicAds() {
+        try {
+          const res = await fetch("/api/ads?public=true");
+          const ads = await res.json();
+          const container = document.getElementById("publicAds");
+          container.innerHTML = Array.isArray(ads) && ads.length ?
+            ads.map(a => `<div class='ad-card'><h3>${a.title}</h3><p>${a.description}</p></div>`).join("") :
+            "<p>No listings available.</p>";
+        } catch {
+          document.getElementById("publicAds").innerHTML = "<p>Failed to load listings.</p>";
+        }
+      }
+      loadPublicAds();
+    });
+  </script>
+</body>
+</html>

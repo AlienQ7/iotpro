@@ -1,0 +1,134 @@
+/* ===== Global Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Consolas", monospace;
+}
+
+/* ===== Background ===== */
+body {
+  background: radial-gradient(circle at center, #000 60%, #050505);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* ===== Container ===== */
+.login_email {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.email_login {
+  background: #111;
+  border: 1px solid #ff9500;
+  box-shadow: 0 0 25px #ff950055, 0 0 40px #ff950033 inset;
+  border-radius: 10px;
+  padding: 25px 30px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+/* ===== Close Button ===== */
+.close__btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  color: #ff9500;
+  font-size: 26px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.close__btn:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #ff9500;
+}
+
+/* ===== Heading and Paragraph ===== */
+h1 {
+  color: #00ff88;
+  margin-bottom: 10px;
+  font-size: 1.7rem;
+  text-shadow: 0 0 8px #00ff8844;
+}
+
+p {
+  color: #ccc;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+/* ===== Input Fields ===== */
+form input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border: none;
+  border-radius: 6px;
+  background: #000;
+  color: #0f0;
+  border: 1px solid #333;
+  transition: 0.2s;
+}
+form input:focus {
+  outline: none;
+  border-color: #ff9500;
+  box-shadow: 0 0 10px #ff9500;
+}
+
+/* ===== Password Containers ===== */
+.password-container {
+  position: relative;
+}
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  color: #888;
+  transition: 0.2s;
+}
+.toggle-password:hover {
+  color: #fff;
+}
+
+/* ===== Button ===== */
+button {
+  width: 100%;
+  background: linear-gradient(90deg, #ff9500, #ffb300);
+  color: #000;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: 0.3s;
+  box-shadow: 0 0 10px #ff9500, 0 0 20px #ff950055;
+}
+button:hover {
+  background: #ffaa33;
+  box-shadow: 0 0 20px #ff9500, 0 0 35px #ffaa00;
+}
+
+/* ===== Link Below Form ===== */
+.email_login p a {
+  text-decoration: none;
+  color: #00aaff;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.email_login p a:hover {
+  color: #00ffcc;
+  text-shadow: 0 0 5px #00ffcc;
+}

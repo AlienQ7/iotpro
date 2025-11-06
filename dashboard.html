@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard | NagaDataLink</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header-bar">
+    <div class="rank-display">
+      <span class="rank-label">Naga</span>
+      <span class="rank-title">DataLink</span>
+    </div>
+    <div class="header-menu">
+      <button id="loginBtn" class="hamburger-btn" onclick="window.location.href='index.html'">Login</button>
+      <button id="logoutBtn" class="hamburger-btn" style="display:none;" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="profile-container">
+      <h2>Welcome, <span id="userName">Guest</span></h2>
+      <p>Email: <span id="userEmail">-</span></p>
+      <a id="profileLink" href="profile.html" class="menu-shop-link" style="display:none;">View / Edit Profile</a>
+    </section>
+
+    <section class="task-manager">
+      <h2>My Ads</h2>
+      <div id="myAds" class="ads-container">
+        <p>Loading your ads...</p>
+      </div>
+    </section>
+
+    <section class="auth-container">
+      <h2>Post a New Ad</h2>
+      <form id="addAdForm">
+        <input type="text" id="adTitle" placeholder="Ad Title" required />
+        <input type="text" id="adCategory" placeholder="Category" required />
+        <input type="text" id="adLocation" placeholder="Location" required />
+        <textarea id="adDescription" placeholder="Description" rows="3" required></textarea>
+        <input type="text" id="adContact" placeholder="Contact Info" required />
+        <button type="submit">Add Ad</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 NagaDataLink</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userNameEl = document.getElementById("userName");
+      const userEmailEl = document.getElementById("userEmail");
+      const loginBtn = document.getElementById("loginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const profileLink = document.getElementById("profileLink");
+
+      if (user) {
+        userNameEl.textContent = user.name || "User";
+        userEmailEl.textContent = user.email || "-";
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+        profileLink.style.display = "inline-block";
+        // load user ads (script.js has loadAds)
+        if (user.id) loadAds("myAds", user.id);
+      } else {
+        document.getElementById("myAds").innerHTML =
+          '<p class="stats-line">Please <a href="index.html" style="color: var(--color-accent);">login</a> to view your ads.</p>';
+        document.getElementById("addAdForm").style.display = "none";
+      }
+
+      // Add ad submit handler
+      document.getElementById("addAdForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) return alert("Please login first.");
+
+        const data = {
+          title: document.getElementById("adTitle").value,
+          category: document.getElementById("adCategory").value,
+          location: document.getElementById("adLocation").value,
+          description: document.getElementById("adDescription").value,
+          contact: document.getElementById("adContact").value,
+          email: user.email,
+          user_id: user.id
+        };
+
+        try {
+          const res = await fetch("/api/ads", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+          if (res.ok) {
+            alert("Ad posted successfully!");
+            e.target.reset();
+            loadAds("myAds", user.id);
+          } else {
+            alert("Failed to post ad.");
+          }
+        } catch {
+          alert("Network error, please try again later.");
+        }
+      });
+    });
+
+    function logout() {
+      localStorage.removeItem("user");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
