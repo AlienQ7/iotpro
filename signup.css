@@ -1,3 +1,18 @@
+/* ===== Root Variables ===== */
+:root {
+  --bg-dark: #0a0016;
+  --bg-gradient: radial-gradient(circle at center, #0b0120 0%, #000010 100%);
+  --primary-blue: #4d6fff;
+  --primary-purple: #7f2fff;
+  --primary-gold: #ffcc33;
+  --accent-glow: #ffd166;
+  --text-light: #e0e0ff;
+  --text-muted: #999;
+  --input-bg: #050010;
+  --input-border: #3a2b60;
+  --success-green: #00ff88;
+}
+
 /* ===== Global Reset ===== */
 * {
   margin: 0;
@@ -8,12 +23,44 @@
 
 /* ===== Background ===== */
 body {
-  background: radial-gradient(circle at center, #000 60%, #050505);
-  color: #fff;
+  background: var(--bg-gradient);
+  color: var(--text-light);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== Animated Glow Orbs (optional visual touch) ===== */
+body::before,
+body::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.3;
+  animation: floatGlow 10s infinite alternate ease-in-out;
+}
+body::before {
+  background: var(--primary-blue);
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  left: -150px;
+}
+body::after {
+  background: var(--primary-purple);
+  width: 400px;
+  height: 400px;
+  bottom: -100px;
+  right: -150px;
+}
+
+@keyframes floatGlow {
+  from { transform: translateY(0px); }
+  to { transform: translateY(40px); }
 }
 
 /* ===== Container ===== */
@@ -23,18 +70,21 @@ body {
   align-items: center;
   width: 100%;
   padding: 20px;
+  position: relative;
+  z-index: 2;
 }
 
 .email_login {
-  background: #111;
-  border: 1px solid #ff9500;
-  box-shadow: 0 0 25px #ff950055, 0 0 40px #ff950033 inset;
-  border-radius: 10px;
+  background: rgba(10, 0, 30, 0.8);
+  border: 1px solid var(--primary-gold);
+  box-shadow: 0 0 25px var(--primary-gold)55, 0 0 60px var(--primary-purple)33 inset;
+  border-radius: 12px;
   padding: 25px 30px;
   max-width: 360px;
   width: 100%;
   text-align: center;
   position: relative;
+  backdrop-filter: blur(8px);
 }
 
 /* ===== Close Button ===== */
@@ -42,26 +92,26 @@ body {
   position: absolute;
   top: 10px;
   right: 14px;
-  color: #ff9500;
+  color: var(--primary-gold);
   font-size: 26px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.3s;
 }
 .close__btn:hover {
   color: #fff;
-  text-shadow: 0 0 8px #ff9500;
+  text-shadow: 0 0 12px var(--primary-gold);
 }
 
 /* ===== Heading and Paragraph ===== */
 h1 {
-  color: #00ff88;
+  color: var(--primary-blue);
   margin-bottom: 10px;
   font-size: 1.7rem;
-  text-shadow: 0 0 8px #00ff8844;
+  text-shadow: 0 0 10px var(--primary-blue);
 }
 
 p {
-  color: #ccc;
+  color: var(--text-muted);
   margin-bottom: 20px;
   font-size: 0.9rem;
 }
@@ -71,17 +121,16 @@ form input {
   width: 100%;
   padding: 10px 12px;
   margin-bottom: 14px;
-  border: none;
+  border: 1px solid var(--input-border);
   border-radius: 6px;
-  background: #000;
-  color: #0f0;
-  border: 1px solid #333;
-  transition: 0.2s;
+  background: var(--input-bg);
+  color: var(--primary-gold);
+  transition: 0.3s;
 }
 form input:focus {
   outline: none;
-  border-color: #ff9500;
-  box-shadow: 0 0 10px #ff9500;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 15px var(--primary-blue);
 }
 
 /* ===== Password Containers ===== */
@@ -95,17 +144,18 @@ form input:focus {
   transform: translateY(-50%);
   cursor: pointer;
   user-select: none;
-  color: #888;
+  color: var(--text-muted);
   transition: 0.2s;
 }
 .toggle-password:hover {
-  color: #fff;
+  color: var(--primary-gold);
+  text-shadow: 0 0 8px var(--primary-gold);
 }
 
 /* ===== Button ===== */
 button {
   width: 100%;
-  background: linear-gradient(90deg, #ff9500, #ffb300);
+  background: linear-gradient(90deg, var(--primary-purple), var(--primary-gold));
   color: #000;
   border: none;
   padding: 10px;
@@ -114,21 +164,21 @@ button {
   font-weight: bold;
   letter-spacing: 1px;
   transition: 0.3s;
-  box-shadow: 0 0 10px #ff9500, 0 0 20px #ff950055;
+  box-shadow: 0 0 20px var(--primary-gold), 0 0 40px var(--primary-purple)66;
 }
 button:hover {
-  background: #ffaa33;
-  box-shadow: 0 0 20px #ff9500, 0 0 35px #ffaa00;
+  background: linear-gradient(90deg, var(--primary-gold), var(--primary-purple));
+  box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--primary-gold);
 }
 
 /* ===== Link Below Form ===== */
 .email_login p a {
   text-decoration: none;
-  color: #00aaff;
+  color: var(--primary-blue);
   font-weight: bold;
-  transition: 0.2s;
+  transition: 0.3s;
 }
 .email_login p a:hover {
-  color: #00ffcc;
-  text-shadow: 0 0 5px #00ffcc;
+  color: var(--primary-gold);
+  text-shadow: 0 0 10px var(--primary-gold);
 }
