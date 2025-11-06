@@ -1,7 +1,7 @@
 // functions/api/auth.js
 export async function onRequest(context) {
   const { request, env } = context;
-  const DB = env.DB;
+  const NDB = env.NDB;
 
   const CORS_HEADERS = {
     "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export async function onRequest(context) {
     }
 
     try {
-      const existing = await DB.prepare("SELECT id FROM users WHERE email = ?")
+      const existing = await NDB.prepare("SELECT id FROM users WHERE email = ?")
         .bind(email)
         .first();
       if (existing) {
@@ -90,7 +90,7 @@ export async function onRequest(context) {
       const recoveryCode = makeRecoveryCode(12);
       const recoveryHashed = await hashPassword(recoveryCode);
 
-      await DB.prepare(
+      await NDB.prepare(
         "INSERT INTO users (name, email, password, phone, gender, recovery_code) VALUES (?, ?, ?, ?, ?, ?)"
       ).bind(name, email, hashedPassword, phone, gender, recoveryHashed).run();
 
@@ -122,7 +122,7 @@ export async function onRequest(context) {
     }
 
     try {
-      const user = await DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
+      const user = await NDB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first();
       if (!user) {
         return new Response(JSON.stringify({ error: "Invalid credentials" }), {
           status: 401,
@@ -145,7 +145,7 @@ export async function onRequest(context) {
       // Upgrade plaintext to hashed if needed
       if (isPlainMatch && !isHashedMatch) {
         try {
-          await DB.prepare("UPDATE users SET password = ? WHERE id = ?")
+          await NDB.prepare("UPDATE users SET password = ? WHERE id = ?")
             .bind(hashed, user.id)
             .run();
         } catch (e) {
@@ -187,7 +187,7 @@ export async function onRequest(context) {
     }
 
     try {
-      const user = await DB.prepare(
+      const user = await NDB.prepare(
         "SELECT id, recovery_code FROM users WHERE email = ?"
       ).bind(email).first();
 
@@ -213,7 +213,7 @@ export async function onRequest(context) {
         const newCode = makeRecoveryCode(12);
         const newCodeHashed = await hashPassword(newCode);
 
-        await DB.prepare(
+        await NDB.prepare(
           "UPDATE users SET password = ?, recovery_code = ? WHERE id = ?"
         ).bind(newHashed, newCodeHashed, user.id).run();
 
@@ -251,7 +251,7 @@ export async function onRequest(context) {
     }
 
     try {
-      const result = await DB.prepare("DELETE FROM users WHERE email = ?")
+      const result = await NDB.prepare("DELETE FROM users WHERE email = ?")
         .bind(email)
         .run();
       if (result.meta.changes > 0) {
