@@ -20,14 +20,12 @@
   <div id="categoryDrawer" class="category-drawer">
     <button class="category-close" id="closeCategory">&times;</button>
     
-    <h3>Categories</h3>
+    <center><h3>Categories</h3></center>
     <ul id="categoryList">
-      <li>Cars</li><li>Hotel</li><li>Hostel</li><li>Mobile</li><li>Motorcycle</li>
-      <li>Tablets</li><li>TV</li><li>Shop</li><li>Rent</li><li>Restaurant</li><li>Others</li>
+      <li>Iot</li><li>Iow</li><li>Ioe</li></li>
     </ul>
-
     <hr style="border-color: rgba(255, 215, 0, 0.5); margin: 15px 0;" />
-    <h3>User Menu</h3>
+   <center><h3>User Menu</h3></center>
     <ul class="user-menu-list">
          <li id="menuLogin-wrapper">
     <button id="menuLogin" style="background: none; border: none; color: var(--neon-gold); font-size: 1rem; padding: 0; cursor: pointer; display: block; width: 100%; text-align: left;">
@@ -41,7 +39,7 @@
   </div>
   <div id="overlay" class="overlay"></div>
 
-  <main id="mainContent">
+   <main id="mainContent">
    <div class="search-bar" id="mainSearchBar">
       <input type="text" id="searchInput" placeholder="Search listings...">
       <button id="searchBtn">🔍</button>
@@ -58,7 +56,7 @@
 
   <div id="loginModal" class="modal">
     <div class="modal-card">
-       <h2 id="closeLoginModal" style="position: absolute; top: -20px; right: -25px; font-size: 1.8rem; cursor: pointer;">&times;</h2>
+       <h2 id="closeLoginModal" style="position: absolute; top: -20px; right: -25px; font-size: 1.8rem; cursor: pointer;"></h2>
 
       <form id="loginForm">
         <input type="email" id="email" placeholder="Email" required />
@@ -71,52 +69,65 @@
       <p style="text-align:center;margin-top:6px;">Don’t have an account? <a href="signup.html" style="color:#4af;">Sign up</a></p>
     </div>
   </div>
-
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const hamburger = document.getElementById("hamburger");
-      const dropdownMenu = document.getElementById("dropdownMenu");
+      
+      // --- REMOVED: const hamburger = document.getElementById("hamburger");
+      // --- REMOVED: const dropdownMenu = document.getElementById("dropdownMenu");
+      
       const categoryBtn = document.getElementById("categoryBtn");
       const categoryDrawer = document.getElementById("categoryDrawer");
       const closeCategory = document.getElementById("closeCategory");
       const overlay = document.getElementById("overlay");
-      const mainContent = document.getElementById("mainContent");
+      const mainContent = document.getElementById("mainContent"); // Still used for shift effect
 
-      // Drawer toggle
-      function openDrawer() {
-        categoryDrawer.classList.add("open");
-        overlay.classList.add("show");
-        mainContent.classList.add("shifted");
-      }
-      function closeDrawer() {
-        categoryDrawer.classList.remove("open");
-        overlay.classList.remove("show");
-        mainContent.classList.remove("shifted");
-      }
-      categoryBtn.addEventListener("click", openDrawer);
-      closeCategory.addEventListener("click", closeDrawer);
-      overlay.addEventListener("click", closeDrawer);
-
-      // Dropdown menu
-      hamburger.addEventListener("click", () => {
-        dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
-      });
-      document.addEventListener("click", (e) => {
-        if (!e.target.closest(".menu-wrapper")) dropdownMenu.style.display = "none";
-      });
-
-      // Auth
-      const menuLogin = document.getElementById("menuLogin");
+      // --- LOGIN/AUTH CONSTANTS ---
+      // The element with the ID "menuLogin" is now the button inside the <li>
+      const menuLogin = document.getElementById("menuLogin"); 
       const menuLogout = document.getElementById("menuLogout");
       const menuProfile = document.getElementById("menuProfile");
       const loginModal = document.getElementById("loginModal");
       const closeLoginModal = document.getElementById("closeLoginModal");
       const loginForm = document.getElementById("loginForm");
+      
+      // --- Search Bar Constant (For glowing box fix) ---
+      const mainSearchBar = document.getElementById("mainSearchBar"); 
 
+      // --- Drawer Toggle Functions ---
+      function openDrawer() {
+        categoryDrawer.classList.add("open");
+        overlay.classList.add("show");
+        // mainContent.classList.add("shifted"); // Uncomment if you add the CSS for this
+      }
+      function closeDrawer() {
+        categoryDrawer.classList.remove("open");
+        overlay.classList.remove("show");
+        // mainContent.classList.remove("shifted"); // Uncomment if you add the CSS for this
+      }
+      
+      // --- Search Bar Toggle for Glowing Box Fix ---
+      function hideSearchBar() {
+        if (mainSearchBar) mainSearchBar.style.display = "none"; 
+      }
+      function showSearchBar() {
+        // Set back to flex to match your .search-bar CSS
+        if (mainSearchBar) mainSearchBar.style.display = "flex"; 
+      }
+
+      // --- Drawer Event Listeners ---
+      categoryBtn.addEventListener("click", openDrawer);
+      closeCategory.addEventListener("click", closeDrawer);
+      overlay.addEventListener("click", closeDrawer);
+
+      // --- REMOVED OLD DROPDOWN LOGIC ---
+      // hamburger.addEventListener("click", ...)
+      // document.addEventListener("click", (e) => ...) 
+      
+      // --- Auth Functions ---
       function updateHeader() {
         const user = JSON.parse(localStorage.getItem("user"));
         if (user) {
+          // Since menuLogin/menuLogout/menuProfile are now <li> or <button> inside a drawer:
           menuLogin.style.display = "none";
           menuProfile.style.display = "block";
           menuLogout.style.display = "block";
@@ -128,15 +139,36 @@
       }
       updateHeader();
 
-      menuLogin.addEventListener("click", () => { loginModal.style.display = "flex"; dropdownMenu.style.display = "none"; });
-      closeLoginModal.addEventListener("click", () => loginModal.style.display = "none");
-      loginModal.addEventListener("click", (e) => { if (e.target === loginModal) loginModal.style.display = "none"; });
+      // FIX: LOGIN BUTTON HANDLER
+      // 1. Closes the drawer.
+      // 2. Shows the modal.
+      // 3. Hides the search bar (Fixes glowing box).
+      menuLogin.addEventListener("click", () => { 
+          closeDrawer(); // Close the menu drawer first
+          loginModal.style.display = "flex"; 
+          hideSearchBar(); 
+      });
+      
+      // FIX: MODAL CLOSE HANDLERS
+      closeLoginModal.addEventListener("click", () => {
+          loginModal.style.display = "none";
+          showSearchBar(); // Show search bar again
+      });
+      loginModal.addEventListener("click", (e) => { 
+          if (e.target === loginModal) {
+              loginModal.style.display = "none"; 
+              showSearchBar(); // Show search bar again
+          }
+      });
 
+      // LOGOUT HANDLER (Corrected to close drawer/menu)
       menuLogout.addEventListener("click", () => {
         localStorage.removeItem("user");
         updateHeader();
+        closeDrawer(); // Also close the drawer on logout
       });
 
+      // --- Login Form Submission (Kept Unchanged) ---
       loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("email").value.trim();
@@ -155,7 +187,7 @@
         } catch { alert("Network error."); }
       });
 
-      // Load ads
+      // Load ads (Kept Unchanged)
       async function loadPublicAds() {
         try {
           const res = await fetch("/api/ads?public=true");
@@ -171,5 +203,7 @@
       loadPublicAds();
     });
   </script>
+
+
 </body>
 </html>
