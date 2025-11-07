@@ -3,43 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NagaSpace</title>
+  <title>Scheduler</title>
   <link rel="stylesheet" href="index.css" />
   <style>
   </style>
 </head>
 <body>
-  <!-- HEADER -->
   <header class="header-bar">
-    <div class="rank-display"><span class="rank-label">Naga</span><span class="rank-title">Space</span></div>
+    <div class="rank-display"><span class="rank-label">Sche</span><span class="rank-title">Duler</span></div>
   </header>
 
-  <!-- FLOATING MENU (top-right) -->
   <div class="menu-wrapper">
-    <button id="hamburger" class="hamburger-icon">&#9776;</button>
-    <div id="dropdownMenu" class="dropdown-menu">
-      <button id="menuLogin">Login</button>
-      <a id="menuProfile" href="profile.html" style="display:none;">Profile</a>
-      <a href="#">About</a>
-      <button id="menuLogout" style="display:none;">Logout</button>
-    </div>
+    <button id="categoryBtn" class="hamburger-icon">&#9776;</button>
   </div>
 
-  <!-- CATEGORY DRAWER -->
   <div id="categoryDrawer" class="category-drawer">
     <button class="category-close" id="closeCategory">&times;</button>
+    
     <h3>Categories</h3>
     <ul id="categoryList">
       <li>Cars</li><li>Hotel</li><li>Hostel</li><li>Mobile</li><li>Motorcycle</li>
       <li>Tablets</li><li>TV</li><li>Shop</li><li>Rent</li><li>Restaurant</li><li>Others</li>
     </ul>
+
+    <hr style="border-color: rgba(255, 215, 0, 0.5); margin: 15px 0;" />
+    <h3>User Menu</h3>
+    <ul class="user-menu-list">
+         <li id="menuLogin-wrapper">
+    <button id="menuLogin" style="background: none; border: none; color: var(--neon-gold); font-size: 1rem; padding: 0; cursor: pointer; display: block; width: 100%; text-align: left;">
+        Login
+    </button>
+</li>
+        <li id="menuProfile" style="display:none;"><a href="profile.html">Profile</a></li>
+        <li><a href="#">About</a></li>
+        <li id="menuLogout" style="display:none;">Logout</li>
+    </ul>
   </div>
   <div id="overlay" class="overlay"></div>
 
-  <!-- MAIN CONTENT -->
-  <main id="mainContent">  
-    <div class="search-bar">
-      <button id="categoryBtn" style="background:#fbbf24; border:none; padding:6px 10px; border-radius:5px; cursor:pointer;">Categories</button>
+  <main id="mainContent">
+   <div class="search-bar" id="mainSearchBar">
       <input type="text" id="searchInput" placeholder="Search listings...">
       <button id="searchBtn">🔍</button>
     </div>
@@ -50,17 +53,16 @@
 
   <footer class="footer">
     <p><a href="#" style="color:#fbbf24; margin-right:10px;">About</a> | <a href="#" style="color:#fbbf24;">Some List</a></p>
-    <p>&copy; 2025 NagaSpace</p>
+    <p>&copy; 2025 Scheduler</p>
   </footer>
 
-  <!-- LOGIN MODAL -->
   <div id="loginModal" class="modal">
     <div class="modal-card">
-      <button id="closeLoginModal" style="position:absolute; top:10px; right:14px; background:none; border:none; font-size:22px; cursor:pointer;">&times;</button>
-      <h2>Login</h2>
+       <h2 id="closeLoginModal" style="position: absolute; top: -20px; right: -25px; font-size: 1.8rem; cursor: pointer;">&times;</h2>
+
       <form id="loginForm">
         <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password" required />
+        <input type="password" id="password" required placeholder="Password" />
         <button type="submit">Login</button>
       </form>
       <p style="text-align:center;margin-top:8px;">
@@ -69,6 +71,7 @@
       <p style="text-align:center;margin-top:6px;">Don’t have an account? <a href="signup.html" style="color:#4af;">Sign up</a></p>
     </div>
   </div>
+
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {

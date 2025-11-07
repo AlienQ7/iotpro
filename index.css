@@ -1,202 +1,343 @@
+:root {
+  --dark-bg: #0b0f1a;
+  --card-bg: rgba(18, 20, 35, 0.85);
+  --neon-gold: #ffd700;
+  --gold-glow: rgba(255, 215, 0, 0.5);
+  --text-color: #f5f5f5;
+  --accent-blue: #4af;
+  --input-bg: rgba(255,255,255,0.1);
+  --border: rgba(255,255,255,0.15);
+  --radius: 10px;
+  --transition: 0.3s ease;
+}
 
-    /* --- Header --- */
-    .header-bar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px 0;
-      background: #111;
-      color: #fff;
-      position: relative;
-      z-index: 1000;
-      height: 56px;
-    }
-    .rank-display { 
-      font-size: 1.3em; 
-      font-weight: bold; 
-    }
-    .rank-label { color: #fbbf24; }
-    .rank-title { color: #fff; }
+/* === GLOBAL RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', 'Orbitron', sans-serif;
+}
 
-    /* --- Floating Menu --- */
-    .menu-wrapper {
-      position: absolute;
-      top: 10px;
-      right: 16px;
-      z-index: 1001;
-    }
-    .hamburger-icon {
-      background: #fbbf24;
-      border: none;
-      color: #111;
-      font-size: 24px;
-      border-radius: 10px;
-      width: 44px;
-      height: 44px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    .dropdown-menu {
-      position: absolute;
-      right: 0;
-      top: 54px;
-      background: #fff;
-      color: #111;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      display: none;
-      flex-direction: column;
-      min-width: 160px;
-      overflow: hidden;
-      z-index: 9999;
-    }
-    .dropdown-menu button,
-    .dropdown-menu a {
-      background: none;
-      border: none;
-      text-align: left;
-      padding: 12px 16px;
-      font-size: 15px;
-      cursor: pointer;
-      width: 100%;
-      color: #111;
-    }
-    .dropdown-menu button:hover,
-    .dropdown-menu a:hover {
-      background: #f4f4f4;
-    }
+body {
+  background-color: var(--dark-bg);
+  color: var(--text-color);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-    /* --- Category Drawer --- */
-    .category-drawer {
-      position: fixed;
-      top: 0;
-      left: -300px;
-      width: 260px;
-      height: 100%;
-      background: #1a1a1a;
-      color: #fff;
-      transition: left 0.3s ease;
-      z-index: 9998;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    .category-drawer.open { left: 0; }
-    .category-drawer h3 {
-      margin-bottom: 12px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-    }
-    .category-drawer ul { list-style: none; padding: 0; }
-    .category-drawer li {
-      margin: 10px 0;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 5px;
-      transition: background 0.2s;
-    }
-    .category-drawer li:hover { background: #333; }
-    .category-close {
-      position: absolute;
-      top: 10px;
-      right: 14px;
-      font-size: 22px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      color: #fff;
-    }
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      z-index: 9997;
-    }
-    .overlay.show { display: block; }
+/* === HEADER === */
+.header-bar {
+  background: rgba(10, 14, 30, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  border-bottom: 1px solid var(--gold-glow);
+  box-shadow: 0 0 10px var(--gold-glow);
+  position: relative;
+  z-index: 50;
+}
 
-    /* --- Main Content --- */
-    main {
-      padding: 20px;
-      transition: transform 0.3s ease;
-    }
-    main.shifted { transform: translateX(220px); }
-    .search-bar {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-    }
-    .search-bar input {
-      flex: 1;
-      padding: 8px;
-      border: 1px solid #333;
-      border-radius: 6px 0 0 6px;
-      background: #222;
-      color: #fff;
-    }
-    .search-bar button {
-      background: #fbbf24;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 0 6px 6px 0;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .ad-card {
-      background: #1c1c1c;
-      border-radius: 8px;
-      padding: 12px;
-      margin: 8px 0;
-    }
-    .ad-card h3 { color: #fbbf24; }
-    .load-more {
-      display: block;
-      margin: 20px auto;
-      background: #fbbf24;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .footer {
-      text-align:center;
-      padding:15px 0;
-      background:#111;
-      color:#fff;
-      margin-top:30px;
-    }
+.rank-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.rank-label {
+  color: var(--neon-gold);
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+.rank-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
 
-    /* --- Modal --- */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    .modal-card {
-      background: #fff;
-      color: #111;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 420px;
-      width: 92%;
-      position: relative;
-    }
-    .modal-card input,
-    .modal-card button {
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .modal-card button {
-      background: #fbbf24;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
- 
+/* === MENU WRAPPER (TOP-RIGHT FLOATING) === */
+.menu-wrapper {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+  z-index: 100;
+}
+
+.hamburger-icon {
+  background: transparent;
+  border: 2px solid var(--neon-gold);
+  color: var(--neon-gold);
+  font-size: 1.6rem;
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+.hamburger-icon:hover {
+  background: var(--neon-gold);
+  color: #111;
+  box-shadow: 0 0 25px var(--neon-gold);
+}
+
+/* DROPDOWN MENU CSS REMOVED - Functionality moved to Category Drawer */
+
+
+/* === NEW RIGHT-SLIDING CATEGORY DRAWER === */
+.category-drawer {
+  position: fixed;
+  top: 0;
+  right: -260px; /* START POSITION: Off-screen to the right */
+  width: 250px;
+  height: 100%;
+  background: var(--card-bg);
+  border-left: 2px solid var(--neon-gold); /* Changed from border-right to border-left */
+  box-shadow: 0 0 25px var(--gold-glow);
+  padding: 20px;
+  transition: 0.4s ease;
+  z-index: 200;
+  overflow-y: auto;
+}
+.category-drawer.open {
+  right: 0; /* END POSITION: Slides into view from the right */
+  left: auto; /* Ensure no conflict */
+}
+
+.category-drawer h3 {
+  color: var(--neon-gold);
+  margin-bottom: 15px;
+}
+.category-drawer ul {
+  list-style: none;
+}
+/* Styles for both Category List and User Menu List */
+.category-drawer li, .category-drawer .user-menu-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.category-drawer li:hover, .category-drawer .user-menu-list li:hover {
+  color: var(--neon-gold);
+  /* Slide direction reversed to match right-side movement */
+  transform: translateX(-5px); 
+}
+
+/* Specific styling for the new links in the drawer */
+.category-drawer .user-menu-list a {
+    color: var(--neon-gold);
+    text-decoration: none;
+    display: block; /* Makes the entire list item clickable */
+}
+
+
+/* Category Close Button - Moved to top LEFT corner of the drawer */
+.category-close {
+  background: none;
+  border: none;
+  color: var(--neon-gold);
+  font-size: 1.8rem;
+  position: absolute;
+  top: 10px;
+  left: 15px; /* Moved from 'right: 15px' to 'left: 15px' */
+  cursor: pointer;
+}
+
+/* === OVERLAY === */
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 150;
+}
+.overlay.show {
+  display: block;
+}
+
+/* === MAIN CONTENT === */
+main {
+  padding: 30px 20px;
+  text-align: center;
+}
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+.search-bar input {
+  width: 250px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: #fff;
+  transition: var(--transition);
+}
+.search-bar input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+.search-bar input:focus {
+  border-color: var(--neon-gold);
+  box-shadow: 0 0 10px var(--neon-gold);
+  background: #fff;
+  color: #111;
+}
+
+.search-bar button {
+  background: var(--neon-gold);
+  color: #111;
+  border: none;
+  padding: 10px 15px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+.search-bar button:hover {
+  background: #ffea70;
+  box-shadow: 0 0 25px var(--neon-gold);
+}
+
+h2 {
+  color: var(--neon-gold);
+  margin: 15px 0;
+  text-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* === ADS CARDS === */
+.ads-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+.ad-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  width: 260px;
+  text-align: left;
+  transition: var(--transition);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.ad-card:hover {
+  border-color: var(--neon-gold);
+  box-shadow: 0 0 20px var(--gold-glow);
+  transform: translateY(-4px);
+}
+.ad-card h3 {
+  color: var(--neon-gold);
+  margin-bottom: 8px;
+}
+.ad-card p {
+  color: #ccc;
+}
+
+/* === LOAD MORE BUTTON === */
+.load-more {
+  margin-top: 30px;
+  background: var(--neon-gold);
+  color: #111;
+  border: none;
+  padding: 12px 25px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+.load-more:hover {
+  background: #ffea70;
+  box-shadow: 0 0 30px var(--neon-gold);
+}
+
+/* === FOOTER === */
+.footer {
+  background: rgba(10, 14, 30, 0.9);
+  color: var(--text-color);
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid var(--gold-glow);
+  box-shadow: 0 -2px 10px var(--gold-glow);
+}
+/* === LOGIN MODAL === */
+.modal {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+}
+.modal-card {
+  background: var(--card-bg);
+  border: 2px solid var(--neon-gold);
+  box-shadow: 0 0 25px var(--gold-glow);
+  border-radius: 15px;
+  padding: 40px 25px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+.modal-card h2 {
+  color: var(--neon-gold);
+  margin-bottom: 15px;
+}
+.modal-card input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border);
+  color: #fff;
+  border-radius: 6px;
+  outline: none;
+  transition: var(--transition);
+}
+.modal-card input:focus {
+  border-color: var(--neon-gold);
+  box-shadow: 0 0 10px var(--neon-gold);
+  background: #fff;
+  color: #111;
+}
+.modal-card button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--neon-gold);
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 15px var(--gold-glow);
+  transition: var(--transition);
+}
+.modal-card button:hover {
+  background-color: #ffea70;
+  box-shadow: 0 0 25px var(--neon-gold);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .search-bar input {
+    width: 100%;
+  }
+  .ad-card {
+    width: 90%;
+  }
+  .menu-wrapper {
+    right: 15px;
+    top: 15px;
+  }
+  /* Dropped the old dropdown menu media query */
+}
