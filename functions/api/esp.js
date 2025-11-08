@@ -29,7 +29,7 @@ export async function onRequestPost(context) {
       ).bind(state, existing.id).run();
     } else {
       // Limit to 5 switches per user
-      const count = await env.DB.prepare(
+      const count = await env.NDB.prepare(
         "SELECT COUNT(*) AS total FROM esp_switches WHERE user_email=?"
       ).bind(email).first();
 
