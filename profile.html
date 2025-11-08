@@ -47,7 +47,7 @@
   <div class="add-device-box">
     <input type="text" id="deviceInput" placeholder="Enter device name or IP"/>
     <button id="connectDeviceBtn" class="action-small">Connect</button>
-    <button id="disconnectDeviceBtn" class="action-small" style="display:none; background-color:red; color:white;">Disconnect</button>
+    <button id="disconnectDeviceBtn" class="action-small" style="display:none; background-color:red; color:white;">❌</button>
   </div>
 </section>
 
@@ -132,6 +132,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("⚠️ Error deleting account. Please try again later.");
     }
   });
+
+  // --- AUTO LOAD CONNECTED DEVICE ---
+  async function loadDeviceStatus() {
+    try {
+      const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const latest = data[data.length - 1];
+        if (latest.label === "device_connected" && latest.state === "on") {
+          connectDeviceBtn.textContent = "Connected ✅";
+          connectDeviceBtn.style.backgroundColor = "gold";
+          connectDeviceBtn.style.color = "black";
+          connectDeviceBtn.disabled = true;
+          disconnectDeviceBtn.style.display = "inline-block";
+        }
+      }
+    } catch (err) {
+      console.warn("Could not load device status", err);
+    }
+  }
 
   // --- CONNECT DEVICE ---
   connectDeviceBtn.addEventListener("click", async () => {
@@ -317,7 +337,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     })[m]);
   }
 
-  loadSwitches();
+  // Load everything
+  await loadDeviceStatus();
+  await loadSwitches();
 });
 </script>
 </body>
