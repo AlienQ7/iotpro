@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profile - NagaSpace</title>
+  <title>Profile - Scheduler</title>
   <link rel="stylesheet" href="profile.css" />
 </head>
 <body>
   <!-- HEADER -->
   <header class="header-bar">
     <div class="rank-display">
-      <span class="rank-label">Naga</span>
-      <span class="rank-title">Space</span>
+      <span class="rank-label">Scheduler</span>
     </div>
 
     <div class="menu-wrapper">
-      <button id="hamburger" class="hamburger-icon">&#9776;</button>
+      <button id="hamburger" class="hamburger-icon">☰</button>
       <div id="dropdownMenu" class="dropdown-menu">
+        <h3>User Menu</h3>
         <a href="index.html">Home</a>
         <a href="#">About</a>
         <button id="menuLogout">Logout</button>
-        <button id="menuDelete" style="color:red;">Delete Account</button>
+        <button id="menuDelete">Delete Account</button>
       </div>
     </div>
   </header>
@@ -30,7 +30,11 @@
     <div class="profile-card">
       <h2>Your Profile</h2>
       <p><strong>Name:</strong> <span id="profileName">-</span></p>
-      <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
+      <p>
+        <strong>Email:</strong>
+        <span id="profileEmail" class="hidden-email">•••••••••••</span>
+        <button id="toggleEmail" class="view-btn">View</button>
+      </p>
     </div>
 
     <div class="profile-actions">
@@ -49,7 +53,7 @@
   </main>
 
   <footer class="footer">
-    <p>&copy; 2025 NagaDataLink</p>
+    <p>&copy; 2025 Scheduler</p>
   </footer>
 
   <script>
@@ -59,12 +63,15 @@
       const menuLogout = document.getElementById("menuLogout");
       const sellSection = document.getElementById("sellSection");
       const menuDelete = document.getElementById("menuDelete");
+      const emailSpan = document.getElementById("profileEmail");
+      const toggleEmailBtn = document.getElementById("toggleEmail");
 
+      // 🟣 Slide-in small side menu toggle
       hamburger.addEventListener("click", () => {
-        dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
+        dropdownMenu.classList.toggle("show");
       });
       document.addEventListener("click", (e) => {
-        if (!e.target.closest(".menu-wrapper")) dropdownMenu.style.display = "none";
+        if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
       });
 
       const user = JSON.parse(localStorage.getItem("user"));
@@ -74,7 +81,7 @@
       }
 
       document.getElementById("profileName").textContent = user.name || "User";
-      document.getElementById("profileEmail").textContent = user.email || "Unknown";
+      emailSpan.dataset.full = user.email || "Unknown";
 
       // ✅ Show Sell button for logged-in users
       sellSection.style.display = "block";
@@ -106,6 +113,19 @@
           }
         } catch (err) {
           alert("⚠️ Error deleting account. Please try again later.");
+        }
+      });
+
+      // 📧 Toggle email visibility
+      toggleEmailBtn.addEventListener("click", () => {
+        if (emailSpan.classList.contains("hidden-email")) {
+          emailSpan.textContent = emailSpan.dataset.full;
+          emailSpan.classList.remove("hidden-email");
+          toggleEmailBtn.textContent = "Hide";
+        } else {
+          emailSpan.textContent = "•••••••••••";
+          emailSpan.classList.add("hidden-email");
+          toggleEmailBtn.textContent = "View";
         }
       });
 
