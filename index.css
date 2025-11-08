@@ -1,0 +1,342 @@
+:root {
+  /* --- CHANGED FOR NAGA SPACE THEME --- */
+  --dark-bg: #f7f7f7; /* Light Gray/Body BG */
+  --card-bg: #ffffff; /* White Card Background */
+  --neon-gold: #FFC700; /* Primary Yellow/Gold Accent */
+  --gold-glow: rgba(255, 199, 0, 0.3); /* Subtler Yellow Shadow/Glow */
+  --text-color: #222222; /* Dark Text Color */
+  /* --- KEPT (Not visible in the demo but good to keep) --- */
+  --accent-blue: #4af;
+  --input-bg: #f0f0f0; /* Light Input Background */
+  --border: rgba(0,0,0,0.15); /* Darker Border for contrast */
+  --radius: 5px; /* Subtle radius */
+  --transition: 0.3s ease;
+}
+
+/* === GLOBAL RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Keeping your font family */
+  font-family: 'Poppins', 'Orbitron', sans-serif; 
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: var(--text-color); /* Now dark text on light bg */
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === HEADER === */
+.header-bar {
+  /* Dark bar with subtle shadow/border */
+  background: #222222; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px; /* Reduced padding to match demo */
+  border-bottom: 1px solid rgba(255, 199, 0, 0.5);
+  box-shadow: none; /* Removing heavy shadow */
+  position: relative;
+  z-index: 50;
+}
+
+.rank-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.rank-label {
+  color: var(--neon-gold);
+  font-weight: 700;
+  font-size: 1.5rem; /* Slightly larger */
+}
+.rank-title {
+  color: #ffffff; /* White on the dark header */
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+/* === MENU WRAPPER (TOP-RIGHT FLOATING) === */
+.menu-wrapper {
+  /* Adjusted position to align with header height */
+  top: 10px; 
+  right: 15px; 
+  z-index: 100;
+}
+
+.hamburger-icon {
+  background: var(--neon-gold); /* Yellow/Gold Button */
+  border: 1px solid var(--neon-gold);
+  color: var(--text-color); /* Dark text on gold */
+  font-size: 1.4rem;
+  border-radius: var(--radius);
+  padding: 5px 10px; /* Smaller button to match demo */
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: none;
+}
+.hamburger-icon:hover {
+  background: #ffea70;
+  color: var(--text-color);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* === NEW RIGHT-SLIDING CATEGORY DRAWER === */
+.category-drawer {
+  right: -260px; 
+  width: 250px;
+  height: 60%;
+  background: var(--card-bg); /* White drawer background */
+  border-left: 2px solid var(--neon-gold); 
+  border-bottom: 2px solid var(--neon-gold);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Subtle shadow */
+  padding: 20px;
+  transition: 0.4s ease;
+  z-index: 200;
+  overflow-y: auto;
+}
+.category-drawer.open {
+  right: 0; 
+  left: auto; 
+}
+
+.category-drawer h3 {
+  color: var(--text-color); /* Dark heading */
+  margin-bottom: 15px;
+}
+.category-drawer ul {
+  list-style: none;
+}
+/* Styles for both Category List and User Menu List */
+.category-drawer li, .category-drawer .user-menu-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.1); /* Light border */
+  color: var(--text-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.category-drawer li:hover, .category-drawer .user-menu-list li:hover {
+  color: var(--neon-gold);
+  transform: none; /* Removed the sliding effect */
+}
+
+/* Specific styling for the new links in the drawer */
+.category-drawer .user-menu-list a {
+    color: var(--text-color); /* Dark link text */
+    text-decoration: none;
+    display: block; 
+}
+.category-drawer .user-menu-list a:hover {
+    color: var(--neon-gold); /* Gold on hover */
+}
+/* Login button style adjustment */
+#menuLogin button {
+    color: var(--text-color) !important;
+}
+#menuLogin button:hover {
+    color: var(--neon-gold) !important;
+}
+
+
+/* Category Close Button */
+.category-close {
+  background: none;
+  border: none;
+  color: var(--text-color); /* Dark close button */
+  font-size: 1.8rem;
+  position: absolute;
+  top: 10px;
+  left: 15px; 
+  cursor: pointer;
+}
+
+/* === OVERLAY === */
+.overlay {
+  background: rgba(0,0,0,0.3); /* Lighter overlay */
+}
+
+/* === MAIN CONTENT === */
+main {
+  padding: 30px 20px;
+  text-align: center;
+}
+
+h2 {
+  color: var(--text-color); /* Dark headings */
+  margin: 15px 0;
+  text-shadow: none; /* Removed glow effect */
+}
+
+/* === ADS CARDS (Reused for info-card, etc.) === */
+.ad-card {
+  background: var(--card-bg); /* White card */
+  border: 1px solid rgba(0,0,0,0.1); /* Light border */
+  border-radius: 8px; /* Slightly smoother radius */
+  padding: 20px;
+  width: 260px;
+  text-align: left;
+  transition: var(--transition);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Standard drop shadow */
+}
+.ad-card:hover {
+  border-color: var(--neon-gold);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transform: translateY(-2px); /* Subtler lift */
+}
+.ad-card h3 {
+  color: var(--text-color); /* Dark heading in card */
+  margin-bottom: 8px;
+}
+.ad-card p {
+  color: #555; /* Slightly darker text for readability */
+}
+
+/* === LOAD MORE BUTTON (Reused for Login/CTA) === */
+.load-more {
+  margin-top: 30px;
+  background: var(--neon-gold);
+  color: var(--text-color); /* Dark text on gold */
+  border: none;
+  padding: 12px 25px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2); /* Standard button shadow */
+}
+.load-more:hover {
+  background: #ffea70;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+/* === FOOTER === */
+.footer {
+  background: #222222; /* Dark footer */
+  color: #ffffff; /* White text */
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid rgba(255, 199, 0, 0.5); 
+  box-shadow: none;
+}
+.footer p a {
+    color: var(--neon-gold) !important;
+}
+
+/* === LOGIN MODAL === */
+.modal {
+  background: rgba(0,0,0,0.7);
+}
+.modal-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(0,0,0,0.1); /* Reduced border */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  border-radius: 8px;
+  padding: 30px 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+.modal-card h2 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+}
+.modal-card input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  background-color: var(--input-bg);
+  border: 1px solid rgba(0,0,0,0.15);
+  color: var(--text-color);
+  border-radius: 5px;
+}
+.modal-card input:focus {
+  border-color: var(--neon-gold);
+  box-shadow: 0 0 5px var(--gold-glow);
+  background: #ffffff; /* White background on focus */
+  color: var(--text-color);
+}
+.modal-card button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--neon-gold);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  font-weight: 700;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+.modal-card button:hover {
+  background-color: #ffea70;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+/* === NEW LANDING PAGE SECTIONS (IoT DEMO) === */
+.info-section {
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+.info-section #iot-heading {
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+.info-section .tagline {
+    color: var(--text-color); /* Dark text */
+    font-size: 1.1rem;
+    text-shadow: none;
+    font-weight: 500;
+}
+.info-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+.info-card {
+    /* Reuses .ad-card styles */
+    background: var(--card-bg);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 25px;
+    width: 90%;
+    max-width: 400px;
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.info-card h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.1); /* Darker, less glowing separator */
+    padding-bottom: 5px;
+}
+.info-card ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+.info-card li {
+    margin-bottom: 8px;
+    color: #555;
+}
+.info-card p {
+    color: #555;
+    line-height: 1.6;
+}
+/* Reusing the load-more class for the About link button styling */
+.info-card .load-more {
+    margin-top: 20px;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .menu-wrapper {
+    right: 15px;
+    top: 10px;
+  }
+}
