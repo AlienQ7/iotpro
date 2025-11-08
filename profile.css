@@ -28,7 +28,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* FIX 4: Reduced padding top/bottom from 12px to 8px */
+  /* FIX: Reduced padding top/bottom from 12px to 8px */
   padding: 8px 20px; 
   background: var(--menu-bg);
   color: var(--text-color);
@@ -36,9 +36,9 @@ body {
   border-bottom: 1px solid var(--gold-glow);
   position: fixed;
   top: 0;
-  /* FIX 1: Set width slightly less than 100% to prevent mobile clipping */
+  /* FIX: Set width slightly less than 100% and use border-box */
   width: 99.8%;
-  box-sizing: border-box; /* Ensures padding is included in the width */
+  box-sizing: border-box; 
   z-index: 100;
 }
 
@@ -65,7 +65,7 @@ body {
 /* FINAL MENU FIXES: Position, Height, and Z-index */
 .dropdown-menu {
   position: fixed;
-  /* FIX 2: Increased negative offset to hide the border/shadow */
+  /* FIX: Increased negative offset to hide the border/shadow */
   right: -300px; 
   top: 0; 
   height: 100%; 
@@ -80,6 +80,8 @@ body {
   transition: right 0.3s ease;
   z-index: 1001; 
   overflow-y: auto; 
+  /* 🚀 CRITICAL FIX: Ensure the menu itself can receive pointer events */
+  pointer-events: auto; 
 }
 
 .dropdown-menu.show {
@@ -104,8 +106,7 @@ body {
   cursor: pointer;
   width: 100%;
   border-radius: 6px;
-  /* FIX 3: Ensure menu options are on top of the overlay */
-  z-index: 1002; 
+  /* Removed z-index: 1002 */
 }
 .dropdown-menu a:hover,
 .dropdown-menu button:hover {
@@ -119,7 +120,6 @@ body {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    /* FIX 3: Ensure background greyout does not block menu clicks */
     background: rgba(0,0,0,0.5); 
     display: none;
     z-index: 1000; 
@@ -127,7 +127,7 @@ body {
 .overlay.show { display: block; }
 
 
-/* PROFILE CARD THEME FIX (Rest of CSS unchanged) */
+/* PROFILE CARD THEME FIX */
 .profile-card, #myAds {
   background: var(--card-bg);
   color: var(--text-color);
