@@ -464,3 +464,20 @@
 .edit-btn {
    background: orange;
 }
+/* ---------- Device UI styles ---------- */
+#deviceSection {
+  max-width: 600px;
+  margin: 20px auto 12px;
+}
+
+.add-device-box {
+  display: flex;
+  gap: 8px;
+}
+
+.add-device-box input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
