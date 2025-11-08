@@ -54,7 +54,7 @@
     <p>&copy; 2025 Scheduler</p>
   </footer>
 
-  <script>
+      <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const dropdownMenu = document.getElementById("dropdownMenu");
       const hamburger = document.getElementById("hamburger");
@@ -65,7 +65,6 @@
       const toggleEmailBtn = document.getElementById("toggleEmail");
 
       // TASK 3 & 4: RIGHT-SLIDE MENU LOGIC (Replaced old toggle)
-      // The CSS below converts dropdown-menu to a right-sliding drawer
       const overlay = document.createElement('div');
       overlay.id = 'profileOverlay';
       overlay.className = 'overlay';
@@ -86,13 +85,20 @@
       });
 
       overlay.addEventListener("click", closeDrawer);
+      
+      // 🚀 FIX: Stop clicks inside the menu from closing it via the overlay listener
       dropdownMenu.addEventListener('click', (e) => {
-        // Close on link click, but not on button actions (Logout/Delete)
+        e.stopPropagation(); 
+        
+        // Original logic: Close on link click, but not on button actions (Logout/Delete)
+        // If a link is clicked, the navigation handles the closing/page change.
+        // We'll keep the stopPropagation above to prevent accidental closure on non-link/button taps.
         if (e.target.tagName === 'A') {
-          closeDrawer();
+          // Links will naturally navigate and close the menu/page.
         }
       });
       
+
 
       // --- EXISTING AUTH AND DATA LOGIC BELOW (UNCHANGED) ---
 
