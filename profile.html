@@ -47,7 +47,7 @@
   <div class="add-device-box">
     <input type="text" id="deviceInput" placeholder="Enter device name or IP"/>
     <button id="connectDeviceBtn" class="action-small">Connect</button>
-    <button id="disconnectDeviceBtn" class="action-small" style="display:none; background-color:red; color:white;">❌</button>
+    <button id="disconnectDeviceBtn" class="action-small" style="display:none; background-color:gold; color:black;">❌</button>
   </div>
 </section>
 
@@ -80,9 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const deviceInput = document.getElementById("deviceInput");
 
   // --- MENU ---
-  hamburger.addEventListener("click", () => {
-    dropdownMenu.classList.toggle("show");
-  });
+  hamburger.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
   });
@@ -133,31 +131,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // --- AUTO LOAD CONNECTED DEVICE ---
-  async function loadDeviceStatus() {
-    try {
-      const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        const latest = data[data.length - 1];
-        if (latest.label === "device_connected" && latest.state === "on") {
-          connectDeviceBtn.textContent = "Connected ✅";
-          connectDeviceBtn.style.backgroundColor = "gold";
-          connectDeviceBtn.style.color = "black";
-          connectDeviceBtn.disabled = true;
-          disconnectDeviceBtn.style.display = "inline-block";
-        }
-      }
-    } catch (err) {
-      console.warn("Could not load device status", err);
-    }
-  }
-
   // --- CONNECT DEVICE ---
   connectDeviceBtn.addEventListener("click", async () => {
     const device = deviceInput.value.trim();
     if (!device) return alert("Please enter a device name or IP!");
-
     try {
       const res = await fetch("/api/esp", {
         method: "PUT",
@@ -165,26 +142,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({ email: user.email, device })
       });
       const data = await res.json();
-
       if (data.success) {
-        connectDeviceBtn.textContent = "Connected ✅";
-        connectDeviceBtn.style.backgroundColor = "gold";
-        connectDeviceBtn.style.color = "black";
-        connectDeviceBtn.disabled = true;
-        disconnectDeviceBtn.style.display = "inline-block";
-      } else {
-        alert("❌ Connection failed: " + (data.error || "Unknown error"));
-      }
-    } catch (err) {
+        localStorage.setItem("connectedDevice", device); // remember it
+        updateDeviceUI(true);
+      } else alert("❌ Connection failed: " + (data.error || "Unknown error"));
+    } catch {
       alert("⚠️ Connection error.");
     }
   });
 
   // --- DISCONNECT DEVICE ---
   disconnectDeviceBtn.addEventListener("click", async () => {
-    const device = deviceInput.value.trim();
+    const device = deviceInput.value.trim() || localStorage.getItem("connectedDevice");
     if (!device) return alert("Please enter a device name or IP!");
-
     try {
       const res = await fetch("/api/esp", {
         method: "PATCH",
@@ -192,23 +162,46 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({ email: user.email, device })
       });
       const data = await res.json();
-
       if (data.success) {
-        connectDeviceBtn.textContent = "Connect";
-        connectDeviceBtn.disabled = false;
-        connectDeviceBtn.style.backgroundColor = "";
-        connectDeviceBtn.style.color = "";
-        disconnectDeviceBtn.style.display = "none";
+        localStorage.removeItem("connectedDevice");
+        updateDeviceUI(false);
         alert("✅ Device disconnected successfully!");
-      } else {
-        alert("❌ Failed to disconnect: " + (data.error || "Unknown error"));
-      }
-    } catch (err) {
+      } else alert("❌ Failed to disconnect: " + (data.error || "Unknown error"));
+    } catch {
       alert("⚠️ Error disconnecting device.");
     }
   });
 
-  // --- LOAD SWITCHES ---
+  // --- RESTORE CONNECTED DEVICE ON LOAD ---
+  function restoreDeviceState() {
+    const device = localStorage.getItem("connectedDevice");
+    if (device) {
+      deviceInput.value = device;
+      updateDeviceUI(true);
+    } else {
+      updateDeviceUI(false);
+    }
+  }
+
+  function updateDeviceUI(connected) {
+    if (connected) {
+      connectDeviceBtn.textContent = "Connected ✅";
+      connectDeviceBtn.style.backgroundColor = "gold";
+      connectDeviceBtn.style.color = "black";
+      connectDeviceBtn.disabled = true;
+      disconnectDeviceBtn.style.display = "inline-block";
+      disconnectDeviceBtn.style.backgroundColor = "gold";
+      disconnectDeviceBtn.style.color = "black";
+    } else {
+      connectDeviceBtn.textContent = "Connect";
+      connectDeviceBtn.disabled = false;
+      connectDeviceBtn.style.backgroundColor = "";
+      connectDeviceBtn.style.color = "";
+      disconnectDeviceBtn.style.display = "none";
+    }
+  }
+
+  // --- SWITCH HANDLING (same as before) ---
   async function loadSwitches() {
     try {
       const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
@@ -258,20 +251,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           input.maxLength = 30;
           labelElem.replaceWith(input);
           input.focus();
-
           input.addEventListener("blur", async () => {
             const newLabel = input.value.trim();
             if (newLabel && newLabel !== labelElem.textContent) {
               const ok = await renameSwitch(user.email, labelElem.textContent, newLabel);
-              if (ok) {
-                input.replaceWith(labelElem);
-                labelElem.textContent = newLabel;
-              } else {
-                input.replaceWith(labelElem);
-              }
-            } else {
-              input.replaceWith(labelElem);
-            }
+              if (ok) { input.replaceWith(labelElem); labelElem.textContent = newLabel; }
+              else input.replaceWith(labelElem);
+            } else input.replaceWith(labelElem);
           });
         });
 
@@ -282,18 +268,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // --- ADD SWITCH ---
   addSwitchBtn.addEventListener("click", async () => {
     const label = newSwitchInput.value.trim();
     if (!label) return;
     const ok = await updateSwitch(user.email, label, "off");
-    if (ok) {
-      newSwitchInput.value = "";
-      loadSwitches();
-    }
+    if (ok) { newSwitchInput.value = ""; loadSwitches(); }
   });
 
-  // --- HELPERS ---
   async function updateSwitch(email, label, state) {
     try {
       const res = await fetch("/api/esp", {
@@ -337,9 +318,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     })[m]);
   }
 
-  // Load everything
-  await loadDeviceStatus();
-  await loadSwitches();
+  restoreDeviceState();
+  loadSwitches();
 });
 </script>
 </body>
