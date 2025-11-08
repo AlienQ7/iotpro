@@ -64,7 +64,7 @@
       const emailSpan = document.getElementById("profileEmail");
       const toggleEmailBtn = document.getElementById("toggleEmail");
 
-      // TASK 3 & 4: RIGHT-SLIDE MENU LOGIC (Replaced old toggle)
+      // Setup Overlay
       const overlay = document.createElement('div');
       overlay.id = 'profileOverlay';
       overlay.className = 'overlay';
@@ -79,26 +79,21 @@
         overlay.classList.remove("show");
       }
 
+      // Open Menu
       hamburger.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevents immediate close
+        e.stopPropagation(); // Prevents click on hamburger from immediately reaching the overlay
         openDrawer();
       });
 
+      // Close Menu when clicking the overlay (outside the menu)
       overlay.addEventListener("click", closeDrawer);
       
-      // 🚀 FIX: Stop clicks inside the menu from closing it via the overlay listener
+      // 🚀 CRITICAL FIX: Stop clicks inside the menu from closing it via the overlay listener
       dropdownMenu.addEventListener('click', (e) => {
         e.stopPropagation(); 
-        
-        // Original logic: Close on link click, but not on button actions (Logout/Delete)
-        // If a link is clicked, the navigation handles the closing/page change.
-        // We'll keep the stopPropagation above to prevent accidental closure on non-link/button taps.
-        if (e.target.tagName === 'A') {
-          // Links will naturally navigate and close the menu/page.
-        }
+        // No need for separate check here; stopPropagation is enough. 
       });
       
-
 
       // --- EXISTING AUTH AND DATA LOGIC BELOW (UNCHANGED) ---
 
