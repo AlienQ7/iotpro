@@ -313,3 +313,78 @@
 .view-btn:hover {
   background: #eab308;
 }
+/* ---------- switches UI styles ---------- */
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 8px 0;
+  background: var(--card-bg);
+  color: var(--card-text-color);
+}
+
+.switch-info {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.switch-label {
+  font-size: 1rem;
+}
+.switch-ts {
+  font-size: 0.8rem;
+  color: rgba(0,0,0,0.45);
+}
+
+.switch-actions {
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+/* toggle button */
+.toggle-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  transition: background 0.18s;
+}
+.toggle-btn:hover { opacity: 0.9; }
+
+/* remove button */
+.remove-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: transparent;
+  cursor: pointer;
+  color: var(--delete-color);
+}
+.remove-btn:hover {
+  background: var(--delete-hover-bg);
+}
+
+/* small action button (Add Switch) */
+.action-small {
+  background: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--action-btn-radius);
+  cursor: pointer;
+  font-weight: 700;
+}
+.action-small:hover { opacity: 0.95; }
+
+/* responsive */
+@media (max-width: 480px) {
+  .switch-row { flex-direction: column; align-items:flex-start; gap:8px; }
+  .switch-actions { width:100%; display:flex; justify-content:flex-end; }
+}
