@@ -30,7 +30,11 @@
     <div class="profile-card">
       <h2>Your Profile</h2>
       <p><strong>Name:</strong> <span id="profileName">-</span></p>
-      <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
+      <p>
+        <strong>Email:</strong> 
+        <span id="profileEmail" style="display:none;">-</span>
+        <button id="toggleEmailBtn" class="view-btn">View</button>
+      </p>
     </div>
 
     <div class="profile-actions">
@@ -59,6 +63,8 @@
       const menuLogout = document.getElementById("menuLogout");
       const sellSection = document.getElementById("sellSection");
       const menuDelete = document.getElementById("menuDelete");
+      const toggleEmailBtn = document.getElementById("toggleEmailBtn");
+      const profileEmail = document.getElementById("profileEmail");
 
       hamburger.addEventListener("click", () => {
         dropdownMenu.classList.toggle("show");
@@ -75,7 +81,18 @@
       }
 
       document.getElementById("profileName").textContent = user.name || "User";
-      document.getElementById("profileEmail").textContent = user.email || "Unknown";
+      profileEmail.textContent = user.email || "Unknown";
+
+      // ✅ Toggle email visibility
+      toggleEmailBtn.addEventListener("click", () => {
+        if (profileEmail.style.display === "none") {
+          profileEmail.style.display = "inline";
+          toggleEmailBtn.textContent = "Hide";
+        } else {
+          profileEmail.style.display = "none";
+          toggleEmailBtn.textContent = "View";
+        }
+      });
 
       // ✅ Show Sell button for logged-in users
       sellSection.style.display = "block";
