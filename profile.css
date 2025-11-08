@@ -75,7 +75,7 @@ body {
   flex-direction: column;
   padding: 20px;
   transition: right 0.3s ease;
-  /* 🚀 FIX 1: Set Z-index extremely high */
+  /* 🚀 FIX 1: Menu Z-index set high */
   z-index: 5000; 
   overflow-y: auto; 
   /* 🚀 FIX 2: Ensure the menu itself can receive pointer events */
@@ -119,7 +119,7 @@ body {
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.5); 
     display: none;
-    /* 🚀 FIX 3: Set overlay Z-index just below the menu */
+    /* 🚀 FIX 3: Overlay Z-index set just below the menu */
     z-index: 4999; 
 }
 .overlay.show { display: block; }
