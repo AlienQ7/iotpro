@@ -138,3 +138,38 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 }
+
+// 🆕 Handle device connection
+export async function onRequestPut(context) {
+  const { request, env } = context;
+  try {
+    const data = await request.json();
+    const { email, device } = data;
+
+    if (!email || !device) {
+      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
+    }
+
+    await env.NDB.batch([
+      env.NDB.prepare(`
+        CREATE TABLE IF NOT EXISTS esp_connections (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_email TEXT,
+          device TEXT,
+          connected INTEGER,
+          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `)
+    ]);
+
+    await env.NDB.prepare(
+      "INSERT INTO esp_connections (user_email, device, connected) VALUES (?, ?, 1)"
+    ).bind(email, device).run();
+
+    return new Response(JSON.stringify({ success: true, connected: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+  }
+}
