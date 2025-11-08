@@ -1,12 +1,12 @@
 /* TASK 2: ROOT VARIABLES - Aligning with Index.css Theme */
 :root {
-  --dark-bg: #0b0f1a; /* Dark background */
-  --card-bg: rgba(18, 20, 35, 0.85); /* Card background (dark semi-transparent) */
-  --neon-gold: #ffd700; /* Gold/Accent color */
-  --gold-glow: rgba(255, 215, 0, 0.5); /* Gold glow/shadow color */
-  --text-color: #f5f5f5; /* Light text color */
-  --text-dark: #111; /* Dark text for buttons */
-  --menu-bg: rgba(10, 14, 30, 0.95); /* Menu/Header background */
+  --dark-bg: #0b0f1a;
+  --card-bg: rgba(18, 20, 35, 0.85);
+  --neon-gold: #ffd700;
+  --gold-glow: rgba(255, 215, 0, 0.5);
+  --text-color: #f5f5f5;
+  --text-dark: #111;
+  --menu-bg: rgba(10, 14, 30, 0.95);
   --border: rgba(255, 255, 255, 0.15);
   --radius: 10px;
   --transition: 0.3s ease;
@@ -16,21 +16,23 @@
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: var(--dark-bg); /* Applied theme */
-  color: var(--text-color); /* Applied theme */
+  background: var(--dark-bg);
+  color: var(--text-color);
   min-height: 100vh;
-  padding-top: 60px; /* Space for fixed header */
+  padding-top: 60px;
+  /* Ensure overflow-x is hidden to prevent horizontal scroll caused by hidden drawer */
+  overflow-x: hidden; 
 }
 
-/* TASK 2: HEADER THEME FIX */
+/* HEADER THEME FIX */
 .header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  background: var(--menu-bg); /* Applied theme */
+  background: var(--menu-bg);
   color: var(--text-color);
-  box-shadow: 0 0 10px var(--gold-glow); /* Applied theme */
+  box-shadow: 0 0 10px var(--gold-glow);
   border-bottom: 1px solid var(--gold-glow);
   position: fixed;
   top: 0;
@@ -38,17 +40,10 @@ body {
   z-index: 100;
 }
 
-/* TASK 1: Dual-color Logo */
-.rank-display {
-  font-size: 1.4em;
-  font-weight: bold;
-}
-.rank-label {
-  color: var(--neon-gold); /* Sche color */
-}
-.rank-title {
-  color: var(--text-color); /* Duler color */
-}
+/* Dual-color Logo */
+.rank-display { font-size: 1.4em; font-weight: bold; }
+.rank-label { color: var(--neon-gold); }
+.rank-title { color: var(--text-color); }
 
 /* Hamburger */
 .hamburger-icon {
@@ -65,33 +60,30 @@ body {
 
 .menu-wrapper { position: relative; }
 
-/* TASK 3 & 4: SLIDING DRAWER MENU FIX */
-/* Reusing .dropdown-menu class for the right-sliding drawer */
+/* TASK 2 & 3 FIX: SLIDING DRAWER MENU FIX */
 .dropdown-menu {
   position: fixed;
-  right: -250px; /* Hidden off-screen (adjusted for easier mobile transition) */
-  top: 0;
-  /* TASK 4: FIX HEIGHT AND ADD BORDER */
-  height: 60%; /* Fixed height to 60% */
+  right: -250px; /* Hides the drawer AND the border/shadow */
+  top: 20%; 
+  height: 60%; 
   width: 220px;
   background: var(--menu-bg);
-  box-shadow: -4px 0 15px var(--gold-glow); /* Applied theme */
-  border-left: 2px solid var(--neon-gold); /* Added border */
-  border-bottom-left-radius: var(--radius); /* Optional: Soften corner */
+  box-shadow: -4px 0 15px var(--gold-glow);
+  border-left: 2px solid var(--neon-gold);
+  border-bottom-left-radius: var(--radius);
   display: flex;
   flex-direction: column;
   padding: 20px;
   transition: right 0.3s ease;
-  z-index: 999;
+  z-index: 1001; /* Must be higher than overlay */
 }
-/* Positioned drawer to 20% down for 60% height to center it */
-.dropdown-menu { top: 20%; } 
 
 .dropdown-menu.show {
-  right: 0; /* Slide in */
+  right: 0; /* Slides into view */
 }
+
 .dropdown-menu h3 {
-  color: var(--neon-gold); /* Applied theme */
+  color: var(--neon-gold);
   margin-bottom: 10px;
   text-align: center;
   border-bottom: 1px solid rgba(255, 215, 0, 0.3);
@@ -114,71 +106,88 @@ body {
   color: var(--neon-gold);
   background: rgba(255, 215, 0, 0.1);
 }
-#menuDelete {
-  color: #ff4d4d;
-}
+#menuDelete { color: #ff4d4d; }
 
-/* New overlay for better UX */
+/* NEW OVERLAY STYLING */
 .overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.5);
     display: none;
-    z-index: 998; /* Below menu, above everything else */
+    z-index: 1000; /* Lower than menu (1001) to prevent greyout/unclickable issue */
 }
 .overlay.show { display: block; }
 
 
 /* PROFILE CARD THEME FIX */
 .profile-card, #myAds {
-  background: var(--card-bg); /* Applied theme */
+  background: var(--card-bg);
   color: var(--text-color);
   padding: 20px;
   border-radius: var(--radius);
   max-width: 400px;
   margin: 40px auto 10px;
-  box-shadow: 0 0 20px var(--gold-glow); /* Applied theme */
+  box-shadow: 0 0 20px var(--gold-glow);
   border: 1px solid rgba(255, 215, 0, 0.3);
 }
 #myAds { max-width: 600px; }
 
-.profile-card h2, #myAds h2 {
-  color: var(--neon-gold); /* Applied theme */
+/* TASK 1 FIX: BUTTON ALIGNMENT */
+/* Resetting margin: auto and display: block if they were implicitly centered */
+.profile-actions {
   text-align: center;
+  margin-top: 15px;
 }
-
-.profile-actions a, .sell-section a {
-  background: var(--neon-gold); /* Applied theme */
+.profile-actions a {
+  /* Using inline-block to preserve the center alignment of the parent,
+     but ensuring it stays centered if the parent text-align: center is used. */
+  display: inline-block; 
+  background: var(--neon-gold);
   color: var(--text-dark);
   padding: 10px 16px;
   border-radius: var(--radius);
   font-weight: bold;
-  box-shadow: 0 0 10px var(--gold-glow); /* Applied theme */
+  box-shadow: 0 0 10px var(--gold-glow);
+  text-decoration: none; /* Ensure link remains clean */
 }
+
+/* TASK 1 FIX: SELL NOW BUTTON ALIGNMENT */
+.sell-section {
+  text-align: center;
+  margin: 25px auto;
+}
+.sell-section a {
+  /* Ensuring Sell button uses the same centered style */
+  display: inline-block;
+  background: var(--neon-gold);
+  color: var(--text-dark);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
 
 /* FOOTER THEME FIX */
 .footer {
   text-align: center;
   padding: 15px 0;
-  background: var(--menu-bg); /* Applied theme */
+  background: var(--menu-bg);
   color: var(--text-color);
   margin-top: 30px;
-  box-shadow: 0 -2px 10px var(--gold-glow); /* Applied theme */
+  box-shadow: 0 -2px 10px var(--gold-glow);
   border-top: 1px solid var(--gold-glow);
 }
 
-/* TASK 4: RESPONSIVENESS (Ensure it works on desktop too) */
+/* RESPONSIVENESS (for larger screens) */
 @media (min-width: 768px) {
-    body { padding-top: 70px; }
-    .profile-card { max-width: 600px; }
-    #myAds { max-width: 800px; }
-    
-    /* Center drawer on larger screens */
     .dropdown-menu {
+        /* On desktop, center vertically with auto height */
         top: 50%;
         transform: translateY(-50%);
-        height: auto; /* Allow content to define height */
+        height: auto; 
         max-height: 80vh;
         border-radius: var(--radius);
     }
