@@ -1,161 +1,300 @@
+/* ================================
+   🌐 ROOT VARIABLES
+===================================*/
+:root {
+  /* Header */
+  --header-bg: #111;
+  --header-text-color: #fff;
+  --header-padding-y: 12px;
+  --header-padding-x: 20px;
+
+  /* Rank display */
+  --rank-font-size: 1.3em;
+  --rank-font-weight: bold;
+  --rank-label-color: #fbbf24;
+  --rank-title-color: #fff;
+
+  /* Hamburger */
+  --hamburger-color: #fff;
+  --hamburger-font-size: 24px;
+  --hamburger-cursor: pointer;
+
+  /* Dropdown menu */
+  --dropdown-bg: #fff;
+  --dropdown-text-color: #111;
+  --dropdown-radius-desktop: 10px 0 0 10px;
+  --dropdown-shadow: -2px 0 12px rgba(0, 0, 0, 0.25);
+  --dropdown-width-desktop: 50%;
+  --dropdown-height-desktop: 60%;
+  --dropdown-transform-hidden: translateX(100%);
+  --dropdown-transform-visible: translateX(0);
+  --dropdown-opacity-hidden: 0;
+  --dropdown-opacity-visible: 1;
+  --dropdown-transition: 0.4s ease;
+
+  /* Dropdown links/buttons */
+  --dropdown-item-padding-y: 14px;
+  --dropdown-item-padding-x: 18px;
+  --dropdown-item-font-size: 16px;
+  --dropdown-item-hover-bg: #f4f4f4;
+
+  /* Dropdown responsive (tablet) */
+  --dropdown-width-tablet: 80%;
+  --dropdown-height-tablet: 70%;
+  --dropdown-radius-tablet: 10px 0 0 0;
+
+  /* Dropdown responsive (mobile) */
+  --dropdown-width-mobile: 60%;
+  --dropdown-height-mobile: 40%;
+  --dropdown-radius-mobile: 0;
+
+  /* Profile card */
+  --card-bg: #fff;
+  --card-text-color: #111;
+  --card-padding: 20px;
+  --card-radius: 10px;
+  --card-max-width: 400px;
+  --card-margin-top: 40px;
+  --card-margin-bottom: 10px;
+  --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  /* Profile actions */
+  --action-margin-top: 15px;
+  --action-btn-bg: #fbbf24;
+  --action-btn-text: #111;
+  --action-btn-padding-y: 10px;
+  --action-btn-padding-x: 16px;
+  --action-btn-radius: 8px;
+
+  /* My ads */
+  --ads-max-width: 600px;
+  --ads-margin-top: 25px;
+  --ads-bg: #fff;
+  --ads-radius: 10px;
+  --ads-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --ads-padding: 10px;
+  --ads-border-color: #ddd;
+  --ads-card-radius: 8px;
+
+  /* Sell section */
+  --sell-bg: #ffc107;
+  --sell-hover-bg: #e0a800;
+  --sell-text: #000;
+  --sell-padding-y: 10px;
+  --sell-padding-x: 20px;
+  --sell-radius: 8px;
+
+  /* Footer */
+  --footer-bg: #111;
+  --footer-text-color: #fff;
+  --footer-padding-y: 15px;
+  --footer-margin-top: 20px;
+
+  /* Delete button */
+  --delete-color: #b91c1c;
+  --delete-hover-bg: #fee2e2;
+}
+
+/* ================================
+   🧭 HEADER
+===================================*/
 .header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
-  background: #111;
-  color: #fff;
+  padding: var(--header-padding-y) var(--header-padding-x);
+  background: var(--header-bg);
+  color: var(--header-text-color);
 }
-.rank-display {
-  font-size: 1.3em;
-  font-weight: bold;
-}
-.rank-label { color: #fbbf24; }
-.rank-title { color: #fff; }
 
+.rank-display {
+  font-size: var(--rank-font-size);
+  font-weight: var(--rank-font-weight);
+}
+
+.rank-label {
+  color: var(--rank-label-color);
+}
+
+.rank-title {
+  color: var(--rank-title-color);
+}
+
+/* ================================
+   🍔 HAMBURGER MENU
+===================================*/
 .hamburger-icon {
   background: none;
   border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
+  color: var(--hamburger-color);
+  font-size: var(--hamburger-font-size);
+  cursor: var(--hamburger-cursor);
 }
-.menu-wrapper { position: relative; margin-left: auto; }
 
-/* 🟩 Updated dropdown menu — now slides in as a large right panel */
+.menu-wrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+/* ================================
+   📜 DROPDOWN MENU
+===================================*/
 .dropdown-menu {
   position: fixed;
   top: 0;
   right: 0;
-  background: #fff;
-  color: #111;
-  border-radius: 10px 0 0 10px;
-  box-shadow: -2px 0 12px rgba(0,0,0,0.25);
+  background: var(--dropdown-bg);
+  color: var(--dropdown-text-color);
+  border-radius: var(--dropdown-radius-desktop);
+  box-shadow: var(--dropdown-shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 9999;
-
-  /* Size and layout */
-  width: 50%;
-  height: 60%;
-
-  /* Start hidden (off-screen) */
-  transform: translateX(100%);
-  opacity: 0;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  width: var(--dropdown-width-desktop);
+  height: var(--dropdown-height-desktop);
+  transform: var(--dropdown-transform-hidden);
+  opacity: var(--dropdown-opacity-hidden);
+  transition: transform var(--dropdown-transition), opacity var(--dropdown-transition);
 }
 
-/* When active */
 .dropdown-menu.show {
-  transform: translateX(0);
-  opacity: 1;
+  transform: var(--dropdown-transform-visible);
+  opacity: var(--dropdown-opacity-visible);
 }
 
-/* Menu links/buttons inside */
 .dropdown-menu button,
 .dropdown-menu a {
   background: none;
   border: none;
   text-align: left;
-  padding: 14px 18px;
-  font-size: 16px;
+  padding: var(--dropdown-item-padding-y) var(--dropdown-item-padding-x);
+  font-size: var(--dropdown-item-font-size);
   cursor: pointer;
   width: 100%;
-  color: #111;
-}
-.dropdown-menu button:hover,
-.dropdown-menu a:hover {
-  background: #f4f4f4;
+  color: var(--dropdown-text-color);
 }
 
-/* 🟧 Responsive adjustments */
+.dropdown-menu button:hover,
+.dropdown-menu a:hover {
+  background: var(--dropdown-item-hover-bg);
+}
+
+/* ================================
+   📱 RESPONSIVE
+===================================*/
 @media (max-width: 768px) {
   .dropdown-menu {
-    width: 80%;
-    height: 70%;
-    border-radius: 10px 0 0 0;
+    width: var(--dropdown-width-tablet);
+    height: var(--dropdown-height-tablet);
+    border-radius: var(--dropdown-radius-tablet);
   }
 }
 
 @media (max-width: 480px) {
   .dropdown-menu {
-    width: 50%;
-    height: 60%;
-    border-radius: 0;
+    width: var(--dropdown-width-mobile);
+    height: var(--dropdown-height-mobile);
+    border-radius: var(--dropdown-radius-mobile);
   }
 }
 
+/* ================================
+   🧾 PROFILE CARD
+===================================*/
 .profile-card {
-  background: #fff;
-  color: #111;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  margin: 40px auto 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: var(--card-bg);
+  color: var(--card-text-color);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius);
+  max-width: var(--card-max-width);
+  margin: var(--card-margin-top) auto var(--card-margin-bottom);
+  box-shadow: var(--card-shadow);
 }
 
-.profile-actions { text-align: center; margin-top: 15px; }
+/* ================================
+   🎯 PROFILE ACTIONS
+===================================*/
+.profile-actions {
+  text-align: center;
+  margin-top: var(--action-margin-top);
+}
+
 .profile-actions a {
   display: inline-block;
-  background: #fbbf24;
-  color: #111;
-  padding: 10px 16px;
-  border-radius: 8px;
+  background: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  padding: var(--action-btn-padding-y) var(--action-btn-padding-x);
+  border-radius: var(--action-btn-radius);
   font-weight: bold;
   text-decoration: none;
 }
 
+/* ================================
+   📢 MY ADS
+===================================*/
 #myAds {
-  max-width: 600px;
-  margin: 25px auto;
-  padding: 10px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: var(--ads-max-width);
+  margin: var(--ads-margin-top) auto;
+  padding: var(--ads-padding);
+  background: var(--ads-bg);
+  border-radius: var(--ads-radius);
+  box-shadow: var(--ads-shadow);
 }
-#myAds h2 { margin-bottom: 10px; }
+
+#myAds h2 {
+  margin-bottom: 10px;
+}
 
 .ad-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid var(--ads-border-color);
+  border-radius: var(--ads-card-radius);
   padding: 10px;
   margin: 8px 0;
 }
 
-/* 🟩 New Sell Button */
+/* ================================
+   💰 SELL SECTION
+===================================*/
 .sell-section {
   text-align: center;
   margin: 25px auto;
 }
+
 .sell-section a {
-  background: #ffc107;
-  color: #000;
-  padding: 10px 20px;
-  border-radius: 8px;
+  background: var(--sell-bg);
+  color: var(--sell-text);
+  padding: var(--sell-padding-y) var(--sell-padding-x);
+  border-radius: var(--sell-radius);
   font-weight: bold;
   text-decoration: none;
   display: inline-block;
   transition: background 0.2s;
 }
+
 .sell-section a:hover {
-  background: #e0a800;
+  background: var(--sell-hover-bg);
 }
 
+/* ================================
+   ⚓ FOOTER
+===================================*/
 .footer {
   text-align: center;
-  padding: 15px 0;
-  background: #111;
-  color: #fff;
-  margin-top: 20px;
+  padding: var(--footer-padding-y) 0;
+  background: var(--footer-bg);
+  color: var(--footer-text-color);
+  margin-top: var(--footer-margin-top);
 }
 
-/* Delete account button styling */
+/* ================================
+   🟥 DELETE BUTTON
+===================================*/
 #menuDelete {
-  color: #b91c1c; /* red tone */
+  color: var(--delete-color);
   font-weight: bold;
 }
+
 #menuDelete:hover {
-  background: #fee2e2;
+  background: var(--delete-hover-bg);
 }
