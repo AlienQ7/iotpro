@@ -20,8 +20,7 @@ body {
   color: var(--text-color);
   min-height: 100vh;
   padding-top: 60px;
-  /* Ensure overflow-x is hidden to prevent horizontal scroll caused by hidden drawer */
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 /* HEADER THEME FIX */
@@ -60,26 +59,27 @@ body {
 
 .menu-wrapper { position: relative; }
 
-/* TASK 2 & 3 FIX: SLIDING DRAWER MENU FIX */
+/* FINAL MENU FIXES: Position, Height, and Z-index */
 .dropdown-menu {
   position: fixed;
-  right: -250px; /* Hides the drawer AND the border/shadow */
-  top: 20%; 
-  height: 60%; 
+  right: -250px; 
+  top: 0; /* FIX: Start from top right */
+  height: 100%; /* Full height like index.html */
   width: 220px;
   background: var(--menu-bg);
   box-shadow: -4px 0 15px var(--gold-glow);
   border-left: 2px solid var(--neon-gold);
-  border-bottom-left-radius: var(--radius);
+  border-bottom-left-radius: 0; /* Removing border radius at bottom-left */
   display: flex;
   flex-direction: column;
   padding: 20px;
   transition: right 0.3s ease;
-  z-index: 1001; /* Must be higher than overlay */
+  z-index: 1001; /* Must be highest */
+  overflow-y: auto; /* Allows scrolling if menu items exceed height */
 }
 
 .dropdown-menu.show {
-  right: 0; /* Slides into view */
+  right: 0; 
 }
 
 .dropdown-menu h3 {
@@ -108,14 +108,14 @@ body {
 }
 #menuDelete { color: #ff4d4d; }
 
-/* NEW OVERLAY STYLING */
+/* OVERLAY FIX: Z-index lower than menu (1000 < 1001) */
 .overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.5);
     display: none;
-    z-index: 1000; /* Lower than menu (1001) to prevent greyout/unclickable issue */
+    z-index: 1000; 
 }
 .overlay.show { display: block; }
 
@@ -133,15 +133,17 @@ body {
 }
 #myAds { max-width: 600px; }
 
-/* TASK 1 FIX: BUTTON ALIGNMENT */
-/* Resetting margin: auto and display: block if they were implicitly centered */
+.profile-card h2, #myAds h2 {
+  color: var(--neon-gold);
+  text-align: center;
+}
+
+/* BUTTON ALIGNMENT FIX (Back to Home) */
 .profile-actions {
   text-align: center;
   margin-top: 15px;
 }
 .profile-actions a {
-  /* Using inline-block to preserve the center alignment of the parent,
-     but ensuring it stays centered if the parent text-align: center is used. */
   display: inline-block; 
   background: var(--neon-gold);
   color: var(--text-dark);
@@ -149,16 +151,15 @@ body {
   border-radius: var(--radius);
   font-weight: bold;
   box-shadow: 0 0 10px var(--gold-glow);
-  text-decoration: none; /* Ensure link remains clean */
+  text-decoration: none;
 }
 
-/* TASK 1 FIX: SELL NOW BUTTON ALIGNMENT */
+/* SELL NOW BUTTON ALIGNMENT FIX */
 .sell-section {
   text-align: center;
   margin: 25px auto;
 }
 .sell-section a {
-  /* Ensuring Sell button uses the same centered style */
   display: inline-block;
   background: var(--neon-gold);
   color: var(--text-dark);
@@ -183,12 +184,13 @@ body {
 
 /* RESPONSIVENESS (for larger screens) */
 @media (min-width: 768px) {
+    /* For desktop, if the full-height drawer is too much, this can limit it */
     .dropdown-menu {
-        /* On desktop, center vertically with auto height */
+        top: 0; 
+        height: 100%; 
+        /* You can set max-height here if you truly want it to be 60% of the screen height */
+        /* max-height: 60vh; 
         top: 50%;
-        transform: translateY(-50%);
-        height: auto; 
-        max-height: 80vh;
-        border-radius: var(--radius);
+        transform: translateY(-50%); */
     }
 }
