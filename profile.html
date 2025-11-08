@@ -18,7 +18,7 @@
       <button id="hamburger" class="hamburger-icon">&#9776;</button>
       <div id="dropdownMenu" class="dropdown-menu">
         <a href="index.html">Home</a>
-        <a href="#about-section">About</a>
+        <a href="index.html#about-section">About</a>
         <button id="menuLogout">Logout</button>
         <button id="menuDelete" style="color:red;">Delete Account</button>
       </div>
@@ -40,6 +40,7 @@
   <div class="profile-actions">
     <a href="index.html">Back to Home</a>
   </div>
+
   <!-- DEVICE CONNECTION SECTION -->
 <section id="deviceSection">
   <h2>Devices</h2>
@@ -71,20 +72,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   const switchesContainer = document.getElementById("userAds");
   const dropdownMenu = document.getElementById("dropdownMenu");
   const hamburger = document.getElementById("hamburger");
+  const menuLogout = document.getElementById("menuLogout");
+  const menuDelete = document.getElementById("menuDelete");
+  const connectDeviceBtn = document.getElementById("connectDeviceBtn");
+  const deviceInput = document.getElementById("deviceInput");
 
-hamburger.addEventListener("click", () => {
-  dropdownMenu.classList.toggle("show");
-});
+  // --- MENU ---
+  hamburger.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("show");
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
+  });
 
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
-});
-
+  // --- USER LOAD ---
   const user = JSON.parse(localStorage.getItem("user"));
   if (!user) { window.location.href = "index.html"; return; }
   document.getElementById("profileName").textContent = user.name || "User";
   profileEmail.textContent = user.email || "Unknown";
 
+  // --- TOGGLE EMAIL ---
   toggleEmailBtn.addEventListener("click", () => {
     if (profileEmail.style.display === "none") {
       profileEmail.style.display = "inline";
@@ -95,7 +102,62 @@ document.addEventListener("click", (e) => {
     }
   });
 
-  // --- Load switches ---
+  // --- LOGOUT ---
+  menuLogout.addEventListener("click", () => {
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  });
+
+  // --- DELETE ACCOUNT ---
+  menuDelete.addEventListener("click", async () => {
+    const confirmDel = confirm("⚠️ Are you sure you want to delete your account? This cannot be undone!");
+    if (!confirmDel) return;
+    try {
+      const res = await fetch(`/api/auth?action=delete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("✅ Your account has been deleted successfully.");
+        localStorage.removeItem("user");
+        window.location.href = "index.html";
+      } else {
+        alert("❌ Failed to delete account: " + (data.error || data.message || "Unknown error"));
+      }
+    } catch {
+      alert("⚠️ Error deleting account. Please try again later.");
+    }
+  });
+
+  // --- CONNECT DEVICE ---
+  connectDeviceBtn.addEventListener("click", async () => {
+    const device = deviceInput.value.trim();
+    if (!device) return alert("Please enter a device name or IP!");
+
+    try {
+      const res = await fetch("/api/device-connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, device })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        connectDeviceBtn.textContent = "Connected ✅";
+        connectDeviceBtn.style.backgroundColor = "gold";
+        connectDeviceBtn.style.color = "black";
+        connectDeviceBtn.disabled = true;
+      } else {
+        alert("❌ Connection failed: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      alert("⚠️ Connection error.");
+    }
+  });
+
+  // --- LOAD SWITCHES ---
   async function loadSwitches() {
     try {
       const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
@@ -109,7 +171,6 @@ document.addEventListener("click", (e) => {
       data.forEach(s => {
         const row = document.createElement("div");
         row.className = "switch-row";
-
         row.innerHTML = `
           <div class="switch-info">
             <strong class="switch-label">${escapeHtml(s.label)}</strong>
@@ -127,20 +188,18 @@ document.addEventListener("click", (e) => {
         const editBtn = row.querySelector(".edit-btn");
         const labelElem = row.querySelector(".switch-label");
 
-        // Toggle
         toggleBtn.addEventListener("click", async () => {
-          const newState = toggleBtn.textContent.includes("Off") ? "off" : "on";
+          const currentState = toggleBtn.textContent.includes("Off") ? "on" : "off";
+          const newState = currentState === "on" ? "off" : "on";
           const ok = await updateSwitch(user.email, labelElem.textContent, newState);
           if (ok) toggleBtn.textContent = newState === "on" ? "Turn Off" : "Turn On";
         });
 
-        // Remove
         removeBtn.addEventListener("click", async () => {
           const ok = await removeSwitch(user.email, labelElem.textContent);
           if (ok) row.remove();
         });
 
-        // Rename (inline edit)
         editBtn.addEventListener("click", () => {
           const input = document.createElement("input");
           input.type = "text";
@@ -167,13 +226,12 @@ document.addEventListener("click", (e) => {
 
         switchesContainer.appendChild(row);
       });
-
-    } catch (err) {
+    } catch {
       switchesContainer.innerHTML = "<p>Failed to load switches.</p>";
     }
   }
 
-  // Add switch
+  // --- ADD SWITCH ---
   addSwitchBtn.addEventListener("click", async () => {
     const label = newSwitchInput.value.trim();
     if (!label) return;
@@ -184,7 +242,7 @@ document.addEventListener("click", (e) => {
     }
   });
 
-  // --- Helper functions ---
+  // --- HELPERS ---
   async function updateSwitch(email, label, state) {
     try {
       const res = await fetch("/api/esp", {
@@ -193,10 +251,8 @@ document.addEventListener("click", (e) => {
         body: JSON.stringify({ email, label, state })
       });
       const data = await res.json();
-      if (data.success) return true;
-      if (data.error) alert(data.error);
-      return false;
-    } catch { alert("Request failed."); return false; }
+      return data.success;
+    } catch { return false; }
   }
 
   async function removeSwitch(email, label) {
@@ -207,10 +263,8 @@ document.addEventListener("click", (e) => {
         body: JSON.stringify({ email, label })
       });
       const data = await res.json();
-      if (data.success) return true;
-      if (data.error) alert(data.error);
-      return false;
-    } catch { alert("Request failed."); return false; }
+      return data.success;
+    } catch { return false; }
   }
 
   async function renameSwitch(email, label, renameTo) {
@@ -221,20 +275,19 @@ document.addEventListener("click", (e) => {
         body: JSON.stringify({ email, label, renameTo })
       });
       const data = await res.json();
-      if (data.success) return true;
-      if (data.error) alert(data.error);
-      return false;
-    } catch { alert("Request failed."); return false; }
+      return data.success;
+    } catch { return false; }
   }
 
   function escapeHtml(str) {
     if (!str) return "";
-    return String(str).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;' })[m]);
+    return String(str).replace(/[&<>"']/g, m => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[m]);
   }
 
   loadSwitches();
 });
 </script>
-
 </body>
 </html>
