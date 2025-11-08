@@ -26,297 +26,198 @@
   </header>
 
   <!-- PROFILE INFO -->
-  <main>
-    <div class="profile-card">
-      <h2>Your Profile</h2>
-      <p><strong>Name:</strong> <span id="profileName">-</span></p>
-      <p>
-        <strong>Email:</strong>
-        <span id="profileEmail" style="display:none;">-</span>
-        <button id="toggleEmailBtn" class="view-btn">View</button>
-      </p>
+          <!-- Only updated main part of profile.html -->
+<main>
+  <div class="profile-card">
+    <h2>Your Profile</h2>
+    <p><strong>Name:</strong> <span id="profileName">-</span></p>
+    <p>
+      <strong>Email:</strong>
+      <span id="profileEmail" style="display:none;">-</span>
+      <button id="toggleEmailBtn" class="view-btn">View</button>
+    </p>
+  </div>
+
+  <div class="profile-actions">
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+  <!-- SWITCHES SECTION -->
+  <section id="myAds">
+    <h2>Switches</h2>
+
+    <div class="add-switch-box">
+      <input type="text" id="newSwitchInput" placeholder="Enter switch label (max 5)" maxlength="30"/>
+      <button id="addSwitchBtn" class="action-small">Add Switch</button>
     </div>
 
-    <div class="profile-actions">
-      <a href="index.html">← Back to Home</a>
-    </div>
+    <div id="userAds"><p>Loading your switches...</p></div>
+  </section>
+</main>
 
-    <!-- SWITCHES SECTION -->
-    <section id="myAds">
-      <h2>Switches</h2>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const profileEmail = document.getElementById("profileEmail");
+  const toggleEmailBtn = document.getElementById("toggleEmailBtn");
+  const addSwitchBtn = document.getElementById("addSwitchBtn");
+  const newSwitchInput = document.getElementById("newSwitchInput");
+  const switchesContainer = document.getElementById("userAds");
 
-      <div style="max-width:600px;margin:0 auto 12px;text-align:right;">
-        <button id="addSwitchBtn" class="action-small">Add Switch</button>
-      </div>
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) { window.location.href = "index.html"; return; }
+  document.getElementById("profileName").textContent = user.name || "User";
+  profileEmail.textContent = user.email || "Unknown";
 
-      <div id="userAds">
-        <p>No switches yet. Click Add Switch to create one (up to 5).</p>
-      </div>
-    </section>
+  toggleEmailBtn.addEventListener("click", () => {
+    if (profileEmail.style.display === "none") {
+      profileEmail.style.display = "inline";
+      toggleEmailBtn.textContent = "Hide";
+    } else {
+      profileEmail.style.display = "none";
+      toggleEmailBtn.textContent = "View";
+    }
+  });
 
-    <!-- keep sell-section hidden -->
-    <div class="sell-section" id="sellSection" style="display:none;">
-      <a href="sell.html">➕ Sell Now</a>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <p>&copy; 2025 ScheDuler</p>
-  </footer>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const dropdownMenu = document.getElementById("dropdownMenu");
-      const hamburger = document.getElementById("hamburger");
-      const menuLogout = document.getElementById("menuLogout");
-      const sellSection = document.getElementById("sellSection");
-      const menuDelete = document.getElementById("menuDelete");
-      const toggleEmailBtn = document.getElementById("toggleEmailBtn");
-      const profileEmail = document.getElementById("profileEmail");
-      const addSwitchBtn = document.getElementById("addSwitchBtn");
-      const switchesContainer = document.getElementById("userAds");
-
-      hamburger.addEventListener("click", () => {
-        dropdownMenu.classList.toggle("show");
-      });
-
-      document.addEventListener("click", (e) => {
-        if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
-      });
-
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user) {
-        window.location.href = "index.html";
+  // --- Load switches ---
+  async function loadSwitches() {
+    try {
+      const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
+      const data = await res.json();
+      switchesContainer.innerHTML = "";
+      if (!Array.isArray(data) || data.length === 0) {
+        switchesContainer.innerHTML = "<p>No switches yet. Add one above.</p>";
         return;
       }
 
-      document.getElementById("profileName").textContent = user.name || "User";
-      profileEmail.textContent = user.email || "Unknown";
+      data.forEach(s => {
+        const row = document.createElement("div");
+        row.className = "switch-row";
 
-      // Toggle email visibility
-      toggleEmailBtn.addEventListener("click", () => {
-        if (profileEmail.style.display === "none") {
-          profileEmail.style.display = "inline";
-          toggleEmailBtn.textContent = "Hide";
-        } else {
-          profileEmail.style.display = "none";
-          toggleEmailBtn.textContent = "View";
-        }
-      });
+        row.innerHTML = `
+          <div class="switch-info">
+            <strong class="switch-label">${escapeHtml(s.label)}</strong>
+            <small class="switch-ts">${s.timestamp || ''}</small>
+          </div>
+          <div class="switch-actions">
+            <button class="toggle-btn">${s.state === 'on' ? 'Turn Off' : 'Turn On'}</button>
+            <button class="edit-btn">Rename</button>
+            <button class="remove-btn">Remove</button>
+          </div>
+        `;
 
-      sellSection.style.display = "none"; // hidden
+        const toggleBtn = row.querySelector(".toggle-btn");
+        const removeBtn = row.querySelector(".remove-btn");
+        const editBtn = row.querySelector(".edit-btn");
+        const labelElem = row.querySelector(".switch-label");
 
-      menuLogout.addEventListener("click", () => {
-        localStorage.removeItem("user");
-        window.location.href = "index.html";
-      });
+        // Toggle
+        toggleBtn.addEventListener("click", async () => {
+          const newState = toggleBtn.textContent.includes("Off") ? "off" : "on";
+          const ok = await updateSwitch(user.email, labelElem.textContent, newState);
+          if (ok) toggleBtn.textContent = newState === "on" ? "Turn Off" : "Turn On";
+        });
 
-      menuDelete.addEventListener("click", async () => {
-        const confirmDel = confirm("⚠️ Are you sure you want to delete your account? This cannot be undone!");
-        if (!confirmDel) return;
+        // Remove
+        removeBtn.addEventListener("click", async () => {
+          const ok = await removeSwitch(user.email, labelElem.textContent);
+          if (ok) row.remove();
+        });
 
-        try {
-          const res = await fetch(`/api/auth?action=delete`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: user.email }),
-          });
-          const data = await res.json();
+        // Rename (inline edit)
+        editBtn.addEventListener("click", () => {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = labelElem.textContent;
+          input.maxLength = 30;
+          labelElem.replaceWith(input);
+          input.focus();
 
-          if (data.success) {
-            alert("✅ Your account has been deleted successfully.");
-            localStorage.removeItem("user");
-            window.location.href = "index.html";
-          } else {
-            alert("❌ Failed to delete account: " + (data.error || data.message || "Unknown error"));
-          }
-        } catch (err) {
-          alert("⚠️ Error deleting account. Please try again later.");
-        }
-      });
-
-      // 🟢 Dynamic Switches handling
-      async function loadSwitches() {
-        try {
-          const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
-          const data = await res.json();
-
-          switchesContainer.innerHTML = '';
-
-          if (!Array.isArray(data) || data.length === 0) {
-            switchesContainer.innerHTML = "<p>No switches yet. Click Add Switch to create one (up to 5).</p>";
-            return;
-          }
-
-          data.forEach(s => {
-            const row = document.createElement('div');
-            row.className = 'switch-row';
-            row.dataset.label = s.label;
-
-            row.innerHTML = `
-              <div class="switch-info">
-                <strong class="switch-label">${escapeHtml(s.label)}</strong>
-                <small class="switch-ts">${s.timestamp || ''}</small>
-              </div>
-              <div class="switch-actions">
-                <button class="toggle-btn">${s.state === 'on' ? 'Turn Off' : 'Turn On'}</button>
-                <button class="rename-btn">Rename</button>
-                <button class="remove-btn">Remove</button>
-              </div>
-            `;
-
-            // Toggle button
-            row.querySelector('.toggle-btn').addEventListener('click', async (e) => {
-              const newState = e.currentTarget.textContent.includes('Off') ? 'off' : 'on';
-              const ok = await updateSwitch(user.email, s.label, newState);
-              if(ok) e.currentTarget.textContent = newState === 'on' ? 'Turn Off' : 'Turn On';
-            });
-
-            // Rename button
-            row.querySelector('.rename-btn').addEventListener('click', async (e) => {
-              const newLabel = prompt("Enter new label:", s.label);
-              if (!newLabel || newLabel === s.label) return;
-              const ok = await renameSwitch(user.email, s.label, newLabel.trim());
-              if(ok) {
-                s.label = newLabel.trim();
-                row.dataset.label = s.label;
-                row.querySelector('.switch-label').textContent = s.label;
+          input.addEventListener("blur", async () => {
+            const newLabel = input.value.trim();
+            if (newLabel && newLabel !== labelElem.textContent) {
+              const ok = await renameSwitch(user.email, labelElem.textContent, newLabel);
+              if (ok) {
+                input.replaceWith(labelElem);
+                labelElem.textContent = newLabel;
+              } else {
+                input.replaceWith(labelElem);
               }
-            });
-
-            // Remove button
-            row.querySelector('.remove-btn').addEventListener('click', async () => {
-              const ok = await removeSwitch(user.email, s.label);
-              if(ok) row.remove();
-            });
-
-            switchesContainer.appendChild(row);
-          });
-
-        } catch {
-          switchesContainer.innerHTML = "<p>Failed to load switches.</p>";
-        }
-      }
-
-      addSwitchBtn.addEventListener('click', async () => {
-        // Check count
-        const rows = switchesContainer.querySelectorAll('.switch-row');
-        if(rows.length >= 5) {
-          alert("You already have 5 switches (limit). Remove one before adding.");
-          return;
-        }
-
-        const label = prompt("Enter switch label (e.g. Room Light):");
-        if(!label) return;
-
-        const ok = await updateSwitch(user.email, label.trim(), 'off');
-        if(ok) {
-          const newSwitch = {
-            label: label.trim(),
-            state: 'off',
-            timestamp: new Date().toISOString().slice(0,19).replace('T',' ')
-          };
-          // append dynamically
-          const row = document.createElement('div');
-          row.className = 'switch-row';
-          row.dataset.label = newSwitch.label;
-          row.innerHTML = `
-            <div class="switch-info">
-              <strong class="switch-label">${escapeHtml(newSwitch.label)}</strong>
-              <small class="switch-ts">${newSwitch.timestamp}</small>
-            </div>
-            <div class="switch-actions">
-              <button class="toggle-btn">Turn On</button>
-              <button class="rename-btn">Rename</button>
-              <button class="remove-btn">Remove</button>
-            </div>
-          `;
-
-          // attach events same as before
-          row.querySelector('.toggle-btn').addEventListener('click', async (e) => {
-            const newState = e.currentTarget.textContent.includes('Off') ? 'off' : 'on';
-            const ok = await updateSwitch(user.email, newSwitch.label, newState);
-            if(ok) e.currentTarget.textContent = newState === 'on' ? 'Turn Off' : 'Turn On';
-          });
-          row.querySelector('.rename-btn').addEventListener('click', async (e) => {
-            const newLabel = prompt("Enter new label:", newSwitch.label);
-            if (!newLabel || newLabel === newSwitch.label) return;
-            const ok = await renameSwitch(user.email, newSwitch.label, newLabel.trim());
-            if(ok) {
-              newSwitch.label = newLabel.trim();
-              row.dataset.label = newSwitch.label;
-              row.querySelector('.switch-label').textContent = newSwitch.label;
+            } else {
+              input.replaceWith(labelElem);
             }
           });
-          row.querySelector('.remove-btn').addEventListener('click', async () => {
-            const ok = await removeSwitch(user.email, newSwitch.label);
-            if(ok) row.remove();
-          });
+        });
 
-          switchesContainer.appendChild(row);
-        }
+        switchesContainer.appendChild(row);
       });
 
-      // API calls
-      async function updateSwitch(email, label, state) {
-        try {
-          const res = await fetch('/api/esp', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({email, label, state})
-          });
-          const data = await res.json();
-          if(data && data.success) return true;
-          if(data && data.error) alert(data.error);
-          return false;
-        } catch {
-          alert("Request failed");
-          return false;
-        }
-      }
+    } catch (err) {
+      switchesContainer.innerHTML = "<p>Failed to load switches.</p>";
+    }
+  }
 
-      async function removeSwitch(email, label) {
-        try {
-          const res = await fetch('/api/esp', {
-            method: 'DELETE',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({email,label})
-          });
-          const data = await res.json();
-          if(data && data.success) return true;
-          if(data && data.error) alert(data.error);
-          return false;
-        } catch {
-          alert("Request failed");
-          return false;
-        }
-      }
-
-      async function renameSwitch(email, oldLabel, newLabel) {
-        try {
-          const res = await fetch('/api/esp/rename', { // optional new endpoint
-            method:'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({email, oldLabel, newLabel})
-          });
-          const data = await res.json();
-          if(data && data.success) return true;
-          if(data && data.error) alert(data.error);
-          return false;
-        } catch {
-          alert("Request failed");
-          return false;
-        }
-      }
-
-      // helpers
-      function escapeHtml(str) {
-        if(!str) return '';
-        return String(str).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
-      }
-
+  // Add switch
+  addSwitchBtn.addEventListener("click", async () => {
+    const label = newSwitchInput.value.trim();
+    if (!label) return;
+    const ok = await updateSwitch(user.email, label, "off");
+    if (ok) {
+      newSwitchInput.value = "";
       loadSwitches();
-    });
-  </script>
+    }
+  });
+
+  // --- Helper functions ---
+  async function updateSwitch(email, label, state) {
+    try {
+      const res = await fetch("/api/esp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, label, state })
+      });
+      const data = await res.json();
+      if (data.success) return true;
+      if (data.error) alert(data.error);
+      return false;
+    } catch { alert("Request failed."); return false; }
+  }
+
+  async function removeSwitch(email, label) {
+    try {
+      const res = await fetch("/api/esp", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, label })
+      });
+      const data = await res.json();
+      if (data.success) return true;
+      if (data.error) alert(data.error);
+      return false;
+    } catch { alert("Request failed."); return false; }
+  }
+
+  async function renameSwitch(email, label, renameTo) {
+    try {
+      const res = await fetch("/api/esp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, label, renameTo })
+      });
+      const data = await res.json();
+      if (data.success) return true;
+      if (data.error) alert(data.error);
+      return false;
+    } catch { alert("Request failed."); return false; }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':'&quot;',"'":'&#39;' })[m]);
+  }
+
+  loadSwitches();
+});
+</script>
+
 </body>
 </html>
