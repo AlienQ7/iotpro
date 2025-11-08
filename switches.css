@@ -1,0 +1,86 @@
+/* ================================
+   🟢 SWITCHES SECTION
+===================================*/
+.add-switch-form {
+  max-width: 600px;
+  margin: 0 auto 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.add-switch-form input[type="text"] {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.add-switch-form button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #fbbf24;
+  color: #111;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-switch-form button:hover {
+  background: #e6a917;
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.switch-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.switch-label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.switch-ts {
+  font-size: 12px;
+  color: #666;
+}
+
+.switch-actions button {
+  margin-left: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.switch-actions .toggle-btn {
+  background: #22c55e;
+  color: #fff;
+}
+
+.switch-actions .toggle-btn:hover {
+  background: #16a34a;
+}
+
+.switch-actions .remove-btn {
+  background: #ef4444;
+  color: #fff;
+}
+
+.switch-actions .remove-btn:hover {
+  background: #b91c1c;
+}
