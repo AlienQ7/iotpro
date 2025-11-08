@@ -481,3 +481,9 @@
   border-radius: 5px;
   border: 1px solid #ccc;
 }
+#connectDeviceBtn.connected {
+  background-color: gold;
+  color: black;
+  box-shadow: 0 0 10px gold;
+  transition: 0.3s;
+}
