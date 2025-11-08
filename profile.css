@@ -22,43 +22,68 @@
 }
 .menu-wrapper { position: relative; margin-left: auto; }
 
-/* 🟩 Updated dropdown menu animation */
+/* 🟩 Updated dropdown menu — now slides in as a large right panel */
 .dropdown-menu {
-  position: absolute;
+  position: fixed;
+  top: 0;
   right: 0;
-  top: 55px;
   background: #fff;
   color: #111;
   border-radius: 10px 0 0 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: -2px 0 12px rgba(0,0,0,0.25);
   display: flex;
   flex-direction: column;
-  min-width: 160px;
   overflow: hidden;
-  z-index: 999;
+  z-index: 9999;
 
-  /* Animation setup */
+  /* Size and layout */
+  width: 50%;
+  height: 60%;
+
+  /* Start hidden (off-screen) */
   transform: translateX(100%);
   opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
+
+/* When active */
 .dropdown-menu.show {
   transform: translateX(0);
   opacity: 1;
 }
 
-.dropdown-menu button, .dropdown-menu a {
+/* Menu links/buttons inside */
+.dropdown-menu button,
+.dropdown-menu a {
   background: none;
   border: none;
   text-align: left;
-  padding: 12px 16px;
-  font-size: 15px;
+  padding: 14px 18px;
+  font-size: 16px;
   cursor: pointer;
   width: 100%;
   color: #111;
 }
-.dropdown-menu button:hover, .dropdown-menu a:hover {
+.dropdown-menu button:hover,
+.dropdown-menu a:hover {
   background: #f4f4f4;
+}
+
+/* 🟧 Responsive adjustments */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    width: 80%;
+    height: 70%;
+    border-radius: 10px 0 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown-menu {
+    width: 100%;
+    height: 60%;
+    border-radius: 0;
+  }
 }
 
 .profile-card {
