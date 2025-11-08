@@ -61,6 +61,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addSwitchBtn = document.getElementById("addSwitchBtn");
   const newSwitchInput = document.getElementById("newSwitchInput");
   const switchesContainer = document.getElementById("userAds");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  const hamburger = document.getElementById("hamburger");
+
+hamburger.addEventListener("click", () => {
+  dropdownMenu.classList.toggle("show");
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
+});
 
   const user = JSON.parse(localStorage.getItem("user"));
   if (!user) { window.location.href = "index.html"; return; }
