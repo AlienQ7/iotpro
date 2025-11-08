@@ -47,6 +47,7 @@
   <div class="add-device-box">
     <input type="text" id="deviceInput" placeholder="Enter device name or IP"/>
     <button id="connectDeviceBtn" class="action-small">Connect</button>
+    <button id="disconnectDeviceBtn" class="action-small" style="display:none; background-color:red; color:white;">Disconnect</button>
   </div>
 </section>
 
@@ -75,6 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const menuLogout = document.getElementById("menuLogout");
   const menuDelete = document.getElementById("menuDelete");
   const connectDeviceBtn = document.getElementById("connectDeviceBtn");
+  const disconnectDeviceBtn = document.getElementById("disconnectDeviceBtn");
   const deviceInput = document.getElementById("deviceInput");
 
   // --- MENU ---
@@ -138,7 +140,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const res = await fetch("/api/esp", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email, device })
       });
@@ -149,11 +151,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         connectDeviceBtn.style.backgroundColor = "gold";
         connectDeviceBtn.style.color = "black";
         connectDeviceBtn.disabled = true;
+        disconnectDeviceBtn.style.display = "inline-block";
       } else {
         alert("❌ Connection failed: " + (data.error || "Unknown error"));
       }
     } catch (err) {
       alert("⚠️ Connection error.");
+    }
+  });
+
+  // --- DISCONNECT DEVICE ---
+  disconnectDeviceBtn.addEventListener("click", async () => {
+    const device = deviceInput.value.trim();
+    if (!device) return alert("Please enter a device name or IP!");
+
+    try {
+      const res = await fetch("/api/esp", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email, device })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        connectDeviceBtn.textContent = "Connect";
+        connectDeviceBtn.disabled = false;
+        connectDeviceBtn.style.backgroundColor = "";
+        connectDeviceBtn.style.color = "";
+        disconnectDeviceBtn.style.display = "none";
+        alert("✅ Device disconnected successfully!");
+      } else {
+        alert("❌ Failed to disconnect: " + (data.error || "Unknown error"));
+      }
+    } catch (err) {
+      alert("⚠️ Error disconnecting device.");
     }
   });
 
