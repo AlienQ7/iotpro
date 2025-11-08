@@ -38,7 +38,7 @@ export async function onRequestPost(context) {
         "UPDATE esp_switches SET label=?, timestamp=CURRENT_TIMESTAMP WHERE id=?"
       ).bind(renameTo, existing.id).run();
 
-      return new Response(JSON.stringify({ success: true }));
+      return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
     }
 
     // Toggle or add switch
@@ -69,7 +69,7 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal Server Error", details: err.message }), { status: 500 });
   }
 }
 
@@ -79,7 +79,8 @@ export async function onRequestDelete(context) {
     const data = await request.json();
     const { email, label } = data;
 
-    if (!email || !label) return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
+    if (!email || !label)
+      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
 
     await env.NDB.batch([
       env.NDB.prepare(`
@@ -97,15 +98,14 @@ export async function onRequestDelete(context) {
       "SELECT id FROM esp_switches WHERE user_email=? AND label=?"
     ).bind(email, label).first();
 
-    if (!existing) return new Response(JSON.stringify({ error: "Switch not found" }), { status: 404 });
+    if (!existing)
+      return new Response(JSON.stringify({ error: "Switch not found" }), { status: 404 });
 
-    await env.NDB.prepare(
-      "DELETE FROM esp_switches WHERE id=?"
-    ).bind(existing.id).run();
+    await env.NDB.prepare("DELETE FROM esp_switches WHERE id=?").bind(existing.id).run();
 
-    return new Response(JSON.stringify({ success: true }));
+    return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal Server Error", details: err.message }), { status: 500 });
   }
 }
 
@@ -114,7 +114,8 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const email = url.searchParams.get("email");
 
-  if (!email) return new Response(JSON.stringify({ error: "Missing email" }), { status: 400 });
+  if (!email)
+    return new Response(JSON.stringify({ error: "Missing email" }), { status: 400 });
 
   try {
     await env.NDB.batch([
@@ -135,20 +136,19 @@ export async function onRequestGet(context) {
 
     return new Response(JSON.stringify(result.results), { headers: { "Content-Type": "application/json" } });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal Server Error", details: err.message }), { status: 500 });
   }
 }
 
-// 🆕 Handle device connection
+// 🟢 Handle device connection
 export async function onRequestPut(context) {
   const { request, env } = context;
   try {
     const data = await request.json();
     const { email, device } = data;
 
-    if (!email || !device) {
+    if (!email || !device)
       return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
-    }
 
     await env.NDB.batch([
       env.NDB.prepare(`
@@ -162,6 +162,18 @@ export async function onRequestPut(context) {
       `)
     ]);
 
+    // Check if already connected
+    const existing = await env.NDB.prepare(
+      "SELECT id, connected FROM esp_connections WHERE user_email=? AND device=?"
+    ).bind(email, device).first();
+
+    if (existing && existing.connected === 1) {
+      return new Response(JSON.stringify({ success: true, message: "Already connected" }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Insert new connection
     await env.NDB.prepare(
       "INSERT INTO esp_connections (user_email, device, connected) VALUES (?, ?, 1)"
     ).bind(email, device).run();
@@ -170,6 +182,48 @@ export async function onRequestPut(context) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal Server Error", details: err.message }), { status: 500 });
+  }
+}
+
+// 🔴 Handle device disconnection
+export async function onRequestPatch(context) {
+  const { request, env } = context;
+  try {
+    const data = await request.json();
+    const { email, device } = data;
+
+    if (!email || !device)
+      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
+
+    await env.NDB.batch([
+      env.NDB.prepare(`
+        CREATE TABLE IF NOT EXISTS esp_connections (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_email TEXT,
+          device TEXT,
+          connected INTEGER,
+          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `)
+    ]);
+
+    const existing = await env.NDB.prepare(
+      "SELECT id, connected FROM esp_connections WHERE user_email=? AND device=?"
+    ).bind(email, device).first();
+
+    if (!existing)
+      return new Response(JSON.stringify({ error: "Device not found" }), { status: 404 });
+
+    // Mark as disconnected
+    await env.NDB.prepare(
+      "UPDATE esp_connections SET connected=0, timestamp=CURRENT_TIMESTAMP WHERE id=?"
+    ).bind(existing.id).run();
+
+    return new Response(JSON.stringify({ success: true, disconnected: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Internal Server Error", details: err.message }), { status: 500 });
   }
 }
