@@ -427,3 +427,37 @@
   background: #ef4444;
   color: #fff;
 }
+.add-switch-box {
+  max-width: 600px;
+  margin: 0 auto 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.add-switch-box input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.switch-info {
+  flex: 1;
+}
+
+.switch-actions button {
+  margin-left: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
