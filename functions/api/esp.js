@@ -8,7 +8,7 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
 
     // Create table if not exists
-    await env.DB.exec(`
+    await env.NDB.exec(`
       CREATE TABLE IF NOT EXISTS esp_switches (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_email TEXT,
@@ -19,12 +19,12 @@ export async function onRequestPost(context) {
     `);
 
     // Check existing
-    const existing = await env.DB.prepare(
+    const existing = await env.NDB.prepare(
       "SELECT id FROM esp_switches WHERE user_email=? AND label=?"
     ).bind(email, label).first();
 
     if (existing) {
-      await env.DB.prepare(
+      await env.NDB.prepare(
         "UPDATE esp_switches SET state=?, timestamp=CURRENT_TIMESTAMP WHERE id=?"
       ).bind(state, existing.id).run();
     } else {
@@ -37,7 +37,7 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({ error: "Switch limit reached (5)" }), { status: 403 });
       }
 
-      await env.DB.prepare(
+      await env.NDB.prepare(
         "INSERT INTO esp_switches (user_email, label, state) VALUES (?, ?, ?)"
       ).bind(email, label, state).run();
     }
@@ -58,7 +58,7 @@ export async function onRequestGet(context) {
   if (!email)
     return new Response(JSON.stringify({ error: "Missing email" }), { status: 400 });
 
-  await env.DB.exec(`
+  await env.NDB.exec(`
     CREATE TABLE IF NOT EXISTS esp_switches (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_email TEXT,
@@ -68,7 +68,7 @@ export async function onRequestGet(context) {
     );
   `);
 
-  const result = await env.DB.prepare(
+  const result = await env.NDB.prepare(
     "SELECT label, state, timestamp FROM esp_switches WHERE user_email=? ORDER BY id ASC"
   ).bind(email).all();
 
