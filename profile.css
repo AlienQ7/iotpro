@@ -298,3 +298,18 @@
 #menuDelete:hover {
   background: var(--delete-hover-bg);
 }
+
+.view-btn {
+  background: var(--action-btn-bg);
+  color: var(--action-btn-text);
+  border: none;
+  border-radius: var(--action-btn-radius);
+  padding: 4px 10px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.2s;
+}
+.view-btn:hover {
+  background: #eab308;
+}
