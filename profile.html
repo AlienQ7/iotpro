@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!device) return alert("Please enter a device name or IP!");
 
     try {
-      const res = await fetch("/api/device-connect", {
+      const res = await fetch("/api/esp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: user.email, device })
