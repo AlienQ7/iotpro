@@ -461,3 +461,6 @@
   border-radius: 4px;
   cursor: pointer;
 }
+.edit-btn {
+   background: orange;
+}
