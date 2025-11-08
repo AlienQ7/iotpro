@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - Scheduler</title>
+  <link rel="stylesheet" href="profile.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body>
+  <header class="header-bar">
+    <div class="rank-display">
+      <span class="rank-label">Sche</span><span class="rank-title">Duler</span>
+    </div>
+
+    <div class="menu-wrapper">
+      <button id="hamburger" class="hamburger-icon">☰</button>
+      <div id="dropdownMenu" class="dropdown-menu">
+        <h3>User Menu</h3>
+        <a href="index.html">Home</a>
+        <a href="index.html#about-section">About</a>
+        <button id="menuLogout">Logout</button>
+        <button id="menuDelete">Delete Account</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="profile-card">
+      <h2>Your Profile</h2>
+      <p><strong>Name:</strong> <span id="profileName">-</span></p>
+      <p>
+        <strong>Email:</strong>
+        <span id="profileEmail" class="hidden-email">•••••••••••</span>
+        <button id="toggleEmail" class="view-btn">View</button>
+      </p>
+    </div>
+
+    <div class="profile-actions">
+      <a href="index.html">← Back to Home</a>
+    </div>
+
+    <section id="myAds">
+      <h2>My Ads</h2>
+      <div id="userAds"><p>Loading your ads...</p></div>
+    </section>
+
+    <div class="sell-section" id="sellSection" style="display:none;">
+      <a href="sell.html">➕ Sell Now</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Scheduler</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const hamburger = document.getElementById("hamburger");
+      const menuLogout = document.getElementById("menuLogout");
+      const sellSection = document.getElementById("sellSection");
+      const menuDelete = document.getElementById("menuDelete");
+      const emailSpan = document.getElementById("profileEmail");
+      const toggleEmailBtn = document.getElementById("toggleEmail");
+
+      // TASK 3 & 4: RIGHT-SLIDE MENU LOGIC (Replaced old toggle)
+      // The CSS below converts dropdown-menu to a right-sliding drawer
+      const overlay = document.createElement('div');
+      overlay.id = 'profileOverlay';
+      overlay.className = 'overlay';
+      document.body.appendChild(overlay);
+
+      function openDrawer() {
+        dropdownMenu.classList.add("show");
+        overlay.classList.add("show");
+      }
+      function closeDrawer() {
+        dropdownMenu.classList.remove("show");
+        overlay.classList.remove("show");
+      }
+
+      hamburger.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevents immediate close
+        openDrawer();
+      });
+
+      overlay.addEventListener("click", closeDrawer);
+      dropdownMenu.addEventListener('click', (e) => {
+        // Close on link click, but not on button actions (Logout/Delete)
+        if (e.target.tagName === 'A') {
+          closeDrawer();
+        }
+      });
+      
+
+      // --- EXISTING AUTH AND DATA LOGIC BELOW (UNCHANGED) ---
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("profileName").textContent = user.name || "User";
+      emailSpan.dataset.full = user.email || "Unknown";
+
+      // Show Sell button for logged-in users
+      sellSection.style.display = "block";
+
+      menuLogout.addEventListener("click", () => {
+        localStorage.removeItem("user");
+        window.location.href = "index.html";
+      });
+
+      // DELETE ACCOUNT FEATURE
+      menuDelete.addEventListener("click", async () => {
+        const confirmDel = confirm("⚠️ Are you sure you want to delete your account? This cannot be undone!");
+        if (!confirmDel) return;
+
+        try {
+          const res = await fetch(`/api/auth?action=delete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email }),
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            alert("✅ Your account has been deleted successfully.");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          } else {
+            alert("❌ Failed to delete account: " + (data.error || data.message || "Unknown error"));
+          }
+        } catch (err) {
+          alert("⚠️ Error deleting account. Please try again later.");
+        }
+      });
+
+      // Toggle email visibility
+      toggleEmailBtn.addEventListener("click", () => {
+        if (emailSpan.classList.contains("hidden-email")) {
+          emailSpan.textContent = emailSpan.dataset.full;
+          emailSpan.classList.remove("hidden-email");
+          toggleEmailBtn.textContent = "Hide";
+        } else {
+          emailSpan.textContent = "•••••••••••";
+          emailSpan.classList.add("hidden-email");
+          toggleEmailBtn.textContent = "View";
+        }
+      });
+
+      // Load user's ads
+      async function loadUserAds() {
+        try {
+          const res = await fetch(`/api/ads?user=${encodeURIComponent(user.email)}`);
+          const ads = await res.json();
+          const container = document.getElementById("userAds");
+
+          if (!Array.isArray(ads) || ads.length === 0) {
+            container.innerHTML = "<p>No ads yet.</p>";
+            return;
+          }
+
+          container.innerHTML = ads.map(a => `
+            <div class="ad-card">
+              <h3>${a.title}</h3>
+              <p>${a.description}</p>
+              <small>${a.date || ''}</small>
+            </div>
+          `).join("");
+        } catch {
+          document.getElementById("userAds").innerHTML = "<p>Failed to load ads.</p>";
+        }
+      }
+
+      loadUserAds();
+    });
+  </script>
+</body>
+</html>
