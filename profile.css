@@ -1,199 +1,136 @@
-/* TASK 2: ROOT VARIABLES - Aligning with Index.css Theme */
-:root {
-  --dark-bg: #0b0f1a;
-  --card-bg: rgba(18, 20, 35, 0.85);
-  --neon-gold: #ffd700;
-  --gold-glow: rgba(255, 215, 0, 0.5);
-  --text-color: #f5f5f5;
-  --text-dark: #111;
-  --menu-bg: rgba(10, 14, 30, 0.95);
-  --border: rgba(255, 255, 255, 0.15);
-  --radius: 10px;
-  --transition: 0.3s ease;
-}
-
-/* General Reset and Body */
-body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  background: var(--dark-bg);
-  color: var(--text-color);
-  min-height: 100vh;
-  padding-top: 60px;
-  overflow-x: hidden;
-}
-
-/* HEADER THEME FIX */
 .header-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 20px; 
-  background: var(--menu-bg);
-  color: var(--text-color);
-  box-shadow: 0 0 10px var(--gold-glow);
-  border-bottom: 1px solid var(--gold-glow);
-  position: fixed;
-  top: 0;
-  width: 99.8%;
-  box-sizing: border-box; 
-  z-index: 100;
+  padding: 12px 20px;
+  background: #111;
+  color: #fff;
 }
+.rank-display {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+.rank-label { color: #fbbf24; }
+.rank-title { color: #fff; }
 
-/* Dual-color Logo */
-.rank-display { font-size: 1.4em; font-weight: bold; }
-.rank-label { color: var(--neon-gold); }
-.rank-title { color: var(--text-color); }
-
-/* Hamburger */
 .hamburger-icon {
   background: none;
-  border: 2px solid var(--neon-gold);
-  color: var(--neon-gold);
+  border: none;
+  color: #fff;
   font-size: 24px;
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: var(--radius);
-  box-shadow: 0 0 10px var(--gold-glow);
-  transition: all 0.3s;
 }
+.menu-wrapper { position: relative; margin-left: auto; }
 
-.menu-wrapper { position: relative; }
-
-/* FINAL MENU FIXES: Position, Height, and Z-index */
+/* 🟩 Updated dropdown menu animation */
 .dropdown-menu {
-  position: fixed;
-  right: -300px; 
-  top: 0; 
-  height: 100%; 
-  width: 220px;
-  background: var(--menu-bg);
-  box-shadow: -4px 0 15px var(--gold-glow);
-  border-left: 2px solid var(--neon-gold);
-  border-bottom-left-radius: 0;
+  position: absolute;
+  right: 0;
+  top: 55px;
+  background: #fff;
+  color: #111;
+  border-radius: 10px 0 0 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  transition: right 0.3s ease;
-  /* 🚀 FIX 1: Max Z-index for menu */
-  z-index: 9999; 
-  overflow-y: auto; 
-  /* Pointer events auto ensures clicks pass through the parent container */
-  pointer-events: auto; 
-}
+  min-width: 160px;
+  overflow: hidden;
+  z-index: 999;
 
+  /* Animation setup */
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
 .dropdown-menu.show {
-  right: 0; 
+  transform: translateX(0);
+  opacity: 1;
 }
 
-.dropdown-menu h3 {
-  color: var(--neon-gold);
-  margin-bottom: 10px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-  padding-bottom: 5px;
-}
-.dropdown-menu a,
-.dropdown-menu button {
+.dropdown-menu button, .dropdown-menu a {
   background: none;
   border: none;
-  color: var(--text-color);
-  font-size: 16px;
-  padding: 10px;
   text-align: left;
+  padding: 12px 16px;
+  font-size: 15px;
   cursor: pointer;
   width: 100%;
-  border-radius: 6px;
+  color: #111;
 }
-.dropdown-menu a:hover,
-.dropdown-menu button:hover {
-  color: var(--neon-gold);
-  background: rgba(255, 215, 0, 0.1);
+.dropdown-menu button:hover, .dropdown-menu a:hover {
+  background: #f4f4f4;
 }
-#menuDelete { color: #ff4d4d; }
 
-/* OVERLAY FIX: Z-index lower than menu */
-.overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); 
-    display: none;
-    /* 🚀 FIX 2: Z-index set just below the menu */
-    z-index: 9998; 
-    /* Crucial: Overlay should not intercept clicks intended for the menu */
-    /* This rule is generally not needed if z-index is right, but adds robustness. */
-    pointer-events: auto; /* It must be auto for its own click listener to work (to close the menu) */
-}
-.overlay.show { display: block; }
-
-
-/* PROFILE CARD THEME FIX */
-.profile-card, #myAds {
-  background: var(--card-bg);
-  color: var(--text-color);
+.profile-card {
+  background: #fff;
+  color: #111;
   padding: 20px;
-  border-radius: var(--radius);
+  border-radius: 10px;
   max-width: 400px;
   margin: 40px auto 10px;
-  box-shadow: 0 0 20px var(--gold-glow);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-}
-#myAds { max-width: 600px; }
-
-.profile-card h2, #myAds h2 {
-  color: var(--neon-gold);
-  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* BUTTON ALIGNMENT FIX (Back to Home) */
-.profile-actions {
-  text-align: center;
-  margin-top: 15px;
-}
+.profile-actions { text-align: center; margin-top: 15px; }
 .profile-actions a {
-  display: inline-block; 
-  background: var(--neon-gold);
-  color: var(--text-dark);
+  display: inline-block;
+  background: #fbbf24;
+  color: #111;
   padding: 10px 16px;
-  border-radius: var(--radius);
+  border-radius: 8px;
   font-weight: bold;
-  box-shadow: 0 0 10px var(--gold-glow);
   text-decoration: none;
 }
 
-/* SELL NOW BUTTON ALIGNMENT FIX */
+#myAds {
+  max-width: 600px;
+  margin: 25px auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+#myAds h2 { margin-bottom: 10px; }
+
+.ad-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+/* 🟩 New Sell Button */
 .sell-section {
   text-align: center;
   margin: 25px auto;
 }
 .sell-section a {
-  display: inline-block;
-  background: var(--neon-gold);
-  color: var(--text-dark);
+  background: #ffc107;
+  color: #000;
   padding: 10px 20px;
-  border-radius: var(--radius);
+  border-radius: 8px;
   font-weight: bold;
   text-decoration: none;
-  box-shadow: 0 0 10px var(--gold-glow);
+  display: inline-block;
+  transition: background 0.2s;
+}
+.sell-section a:hover {
+  background: #e0a800;
 }
 
-
-/* FOOTER THEME FIX */
 .footer {
   text-align: center;
   padding: 15px 0;
-  background: var(--menu-bg);
-  color: var(--text-color);
-  margin-top: 30px;
-  box-shadow: 0 -2px 10px var(--gold-glow);
-  border-top: 1px solid var(--gold-glow);
+  background: #111;
+  color: #fff;
+  margin-top: 20px;
 }
 
-/* RESPONSIVENESS (for larger screens) */
-@media (min-width: 768px) {
-    .dropdown-menu {
-        top: 0; 
-        height: 100%; 
-    }
+/* Delete account button styling */
+#menuDelete {
+  color: #b91c1c; /* red tone */
+  font-weight: bold;
+}
+#menuDelete:hover {
+  background: #fee2e2;
 }
