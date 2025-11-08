@@ -53,7 +53,7 @@
   <footer class="footer">
     <p>&copy; 2025 Scheduler</p>
   </footer>
-<script>
+  <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const dropdownMenu = document.getElementById("dropdownMenu");
       const hamburger = document.getElementById("hamburger");
@@ -72,11 +72,22 @@
       function openDrawer() {
         dropdownMenu.classList.add("show");
         overlay.classList.add("show");
+        // *** CRITICAL FIX ***
+        // When the menu is open, we disable pointer events on the overlay
+        // so clicks fall through to the menu, but we re-enable them later 
+        // for the overlay to be clickable itself.
+        overlay.style.pointerEvents = 'auto'; 
       }
       function closeDrawer() {
         dropdownMenu.classList.remove("show");
         overlay.classList.remove("show");
+        // *** CRITICAL FIX ***
+        // Re-disable pointer events immediately to avoid interfering with the page content
+        overlay.style.pointerEvents = 'none'; 
       }
+
+      // 🚀 GUARANTEED FIX 1: Set initial overlay state to non-interactive
+      overlay.style.pointerEvents = 'none'; 
 
       // Open Menu
       hamburger.addEventListener("click", (e) => {
@@ -84,26 +95,101 @@
         openDrawer();
       });
 
-      // 1. Close Menu when clicking the overlay (outside the menu)
-      // This works because the overlay is full screen.
+      // 🚀 GUARANTEED FIX 2: Only the overlay handles the close (by clicking outside the menu)
       overlay.addEventListener("click", closeDrawer);
       
-      // 2. Add listener to the document to handle clicks outside the menu area
-      document.addEventListener("click", (e) => {
-          // If the menu is open AND the click target is NOT inside the menu or the hamburger, close it.
-          if (dropdownMenu.classList.contains("show") && !e.target.closest(".dropdown-menu") && e.target !== hamburger) {
-              closeDrawer();
-          }
+      // 🚀 GUARANTEED FIX 3: Close the menu when an interactive element inside the drawer is clicked
+      dropdownMenu.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+            // We give it a small delay so the action (like logout) can register first
+            setTimeout(closeDrawer, 10); 
+        }
       });
-
-      // REMOVE: The problematic dropdownMenu.addEventListener('click', e.stopPropagation)
-      // The CSS fixes should now ensure clicks hit the links/buttons.
       
       
       // --- EXISTING AUTH AND DATA LOGIC BELOW (UNCHANGED) ---
-      // ... (The rest of your script: user auth, logout, delete, etc. remains the same) ...
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("profileName").textContent = user.name || "User";
+      emailSpan.dataset.full = user.email || "Unknown";
+
+      // Show Sell button for logged-in users
+      sellSection.style.display = "block";
+
+      menuLogout.addEventListener("click", () => {
+        localStorage.removeItem("user");
+        window.location.href = "index.html";
+      });
+
+      // DELETE ACCOUNT FEATURE
+      menuDelete.addEventListener("click", async () => {
+        const confirmDel = confirm("⚠️ Are you sure you want to delete your account? This cannot be undone!");
+        if (!confirmDel) return;
+
+        try {
+          const res = await fetch(`/api/auth?action=delete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email }),
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            alert("✅ Your account has been deleted successfully.");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          } else {
+            alert("❌ Failed to delete account: " + (data.error || data.message || "Unknown error"));
+          }
+        } catch (err) {
+          alert("⚠️ Error deleting account. Please try again later.");
+        }
+      });
+
+      // Toggle email visibility
+      toggleEmailBtn.addEventListener("click", () => {
+        if (emailSpan.classList.contains("hidden-email")) {
+          emailSpan.textContent = emailSpan.dataset.full;
+          emailSpan.classList.remove("hidden-email");
+          toggleEmailBtn.textContent = "Hide";
+        } else {
+          emailSpan.textContent = "•••••••••••";
+          emailSpan.classList.add("hidden-email");
+          toggleEmailBtn.textContent = "View";
+        }
+      });
+
+      // Load user's ads
+      async function loadUserAds() {
+        try {
+          const res = await fetch(`/api/ads?user=${encodeURIComponent(user.email)}`);
+          const ads = await res.json();
+          const container = document.getElementById("userAds");
+
+          if (!Array.isArray(ads) || ads.length === 0) {
+            container.innerHTML = "<p>No ads yet.</p>";
+            return;
+          }
+
+          container.innerHTML = ads.map(a => `
+            <div class="ad-card">
+              <h3>${a.title}</h3>
+              <p>${a.description}</p>
+              <small>${a.date || ''}</small>
+            </div>
+          `).join("");
+        } catch {
+          document.getElementById("userAds").innerHTML = "<p>Failed to load ads.</p>";
+        }
+      }
+
+      loadUserAds();
     });
 </script>
-
 </body>
 </html>
