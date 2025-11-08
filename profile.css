@@ -75,10 +75,10 @@ body {
   flex-direction: column;
   padding: 20px;
   transition: right 0.3s ease;
-  /* 🚀 FIX 1: Menu Z-index set high */
-  z-index: 5000; 
+  /* 🚀 FIX 1: Max Z-index for menu */
+  z-index: 9999; 
   overflow-y: auto; 
-  /* 🚀 FIX 2: Ensure the menu itself can receive pointer events */
+  /* Pointer events auto ensures clicks pass through the parent container */
   pointer-events: auto; 
 }
 
@@ -119,8 +119,11 @@ body {
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.5); 
     display: none;
-    /* 🚀 FIX 3: Overlay Z-index set just below the menu */
-    z-index: 4999; 
+    /* 🚀 FIX 2: Z-index set just below the menu */
+    z-index: 9998; 
+    /* Crucial: Overlay should not intercept clicks intended for the menu */
+    /* This rule is generally not needed if z-index is right, but adds robustness. */
+    pointer-events: auto; /* It must be auto for its own click listener to work (to close the menu) */
 }
 .overlay.show { display: block; }
 
