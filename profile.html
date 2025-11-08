@@ -31,7 +31,7 @@
       <h2>Your Profile</h2>
       <p><strong>Name:</strong> <span id="profileName">-</span></p>
       <p>
-        <strong>Email:</strong> 
+        <strong>Email:</strong>
         <span id="profileEmail" style="display:none;">-</span>
         <button id="toggleEmailBtn" class="view-btn">View</button>
       </p>
@@ -41,12 +41,21 @@
       <a href="index.html">← Back to Home</a>
     </div>
 
+    <!-- SWITCHES SECTION (re-uses #myAds and #userAds containers) -->
     <section id="myAds">
-      <h2>My Ads</h2>
-      <div id="userAds"><p>Loading your ads...</p></div>
+      <h2>Switches</h2>
+
+      <div style="max-width:600px;margin:0 auto 12px;text-align:right;">
+        <button id="addSwitchBtn" class="action-small">Add Switch</button>
+      </div>
+
+      <div id="userAds">
+        <!-- switches will render here -->
+        <p>Loading your switches...</p>
+      </div>
     </section>
 
-    <!-- 🟩 New Sell Now Section -->
+    <!-- keep sell-section present but hidden (you asked to remove sell) -->
     <div class="sell-section" id="sellSection" style="display:none;">
       <a href="sell.html">➕ Sell Now</a>
     </div>
@@ -65,6 +74,8 @@
       const menuDelete = document.getElementById("menuDelete");
       const toggleEmailBtn = document.getElementById("toggleEmailBtn");
       const profileEmail = document.getElementById("profileEmail");
+      const addSwitchBtn = document.getElementById("addSwitchBtn");
+      const switchesContainer = document.getElementById("userAds"); // re-used
 
       hamburger.addEventListener("click", () => {
         dropdownMenu.classList.toggle("show");
@@ -83,7 +94,7 @@
       document.getElementById("profileName").textContent = user.name || "User";
       profileEmail.textContent = user.email || "Unknown";
 
-      // ✅ Toggle email visibility
+      // Toggle email visibility
       toggleEmailBtn.addEventListener("click", () => {
         if (profileEmail.style.display === "none") {
           profileEmail.style.display = "inline";
@@ -94,15 +105,14 @@
         }
       });
 
-      // ✅ Show Sell button for logged-in users
-      sellSection.style.display = "block";
+      // Show Sell button for logged-in users is intentionally hidden per your request
+      sellSection.style.display = "none";
 
       menuLogout.addEventListener("click", () => {
         localStorage.removeItem("user");
         window.location.href = "index.html";
       });
 
-      // 🟥 DELETE ACCOUNT FEATURE
       menuDelete.addEventListener("click", async () => {
         const confirmDel = confirm("⚠️ Are you sure you want to delete your account? This cannot be undone!");
         if (!confirmDel) return;
@@ -127,31 +137,131 @@
         }
       });
 
-      // Load user's ads
-      async function loadUserAds() {
+      // Load switches and render UI
+      async function loadSwitches() {
+        switchesContainer.innerHTML = "<p>Loading your switches...</p>";
         try {
-          const res = await fetch(`/api/ads?user=${encodeURIComponent(user.email)}`);
-          const ads = await res.json();
-          const container = document.getElementById("userAds");
+          const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
+          const data = await res.json();
 
-          if (!Array.isArray(ads) || ads.length === 0) {
-            container.innerHTML = "<p>No ads yet.</p>";
+          if (!Array.isArray(data) || data.length === 0) {
+            switchesContainer.innerHTML = "<p>No switches yet. Click Add Switch to create one (up to 5).</p>";
             return;
           }
 
-          container.innerHTML = ads.map(a => `
-            <div class="ad-card">
-              <h3>${a.title}</h3>
-              <p>${a.description}</p>
-              <small>${a.date || ''}</small>
+          // Render list
+          switchesContainer.innerHTML = data.map(s => `
+            <div class="switch-row">
+              <div class="switch-info">
+                <strong class="switch-label">${escapeHtml(s.label)}</strong>
+                <small class="switch-ts">${s.timestamp || ''}</small>
+              </div>
+
+              <div class="switch-actions">
+                <button class="toggle-btn" data-label="${escapeAttr(s.label)}">${s.state === 'on' ? 'Turn Off' : 'Turn On'}</button>
+                <button class="remove-btn" data-label="${escapeAttr(s.label)}">Remove</button>
+              </div>
             </div>
           `).join("");
-        } catch {
-          document.getElementById("userAds").innerHTML = "<p>Failed to load ads.</p>";
+
+          // Attach event listeners
+          document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const label = e.currentTarget.dataset.label;
+              const current = e.currentTarget.textContent.includes('Off') ? 'on' : 'off';
+              // toggle: if button shows "Turn Off" it means state is on; so set newState accordingly
+              const newState = current === 'on' ? 'off' : 'on';
+              await updateSwitch(user.email, label, newState);
+              await loadSwitches();
+            });
+          });
+
+          document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const label = e.currentTarget.dataset.label;
+              const ok = confirm(`Remove switch "${label}"?`);
+              if (!ok) return;
+              await removeSwitch(user.email, label);
+              await loadSwitches();
+            });
+          });
+
+        } catch (err) {
+          switchesContainer.innerHTML = "<p>Failed to load switches.</p>";
         }
       }
 
-      loadUserAds();
+      // Add switch (prompt for label)
+      addSwitchBtn.addEventListener('click', async () => {
+        // Check current count first
+        try {
+          const resCount = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
+          const list = await resCount.json();
+          if (Array.isArray(list) && list.length >= 5) {
+            alert("You already have 5 switches (limit). Remove one before adding.");
+            return;
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        const label = prompt("Enter switch label (e.g. Room Light):");
+        if (!label) return;
+
+        // default state = off
+        const ok = await updateSwitch(user.email, label.trim(), 'off');
+        if (ok) loadSwitches();
+      });
+
+      // Update (create or set state)
+      async function updateSwitch(email, label, state) {
+        try {
+          const res = await fetch('/api/esp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, label, state })
+          });
+          const data = await res.json();
+          if (data && data.success) return true;
+          if (data && data.error) alert("Error: " + data.error);
+          return false;
+        } catch (err) {
+          alert("Request failed.");
+          return false;
+        }
+      }
+
+      // Remove switch (DELETE request)
+      async function removeSwitch(email, label) {
+        try {
+          const res = await fetch('/api/esp', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, label })
+          });
+          const data = await res.json();
+          if (data && data.success) return true;
+          if (data && data.error) alert("Error: " + data.error);
+          return false;
+        } catch (err) {
+          alert("Request failed.");
+          return false;
+        }
+      }
+
+      // basic escaping helpers
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"']/g, function (m) {
+          return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m];
+        });
+      }
+      function escapeAttr(str) {
+        return escapeHtml(str).replace(/"/g, '&quot;');
+      }
+
+      // initial load
+      loadSwitches();
     });
   </script>
 </body>
