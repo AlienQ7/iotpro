@@ -5,50 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile</title>
   <link rel="stylesheet" href="profile.css" />
-  <style>
-    /* Extra styles for switches */
-    .switch-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #f5f5f5;
-      padding: 10px 15px;
-      margin: 8px 0;
-      border-radius: 8px;
-      color: #111;
-    }
-    .switch-container button {
-      margin-left: 8px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .switch-container .toggle-btn.on { background: #4caf50; color: #fff; }
-    .switch-container .toggle-btn.off { background: #f44336; color: #fff; }
-    .switch-container .delete-btn { background: #ccc; color: #111; }
-    #addSwitchContainer {
-      display: flex;
-      margin: 10px 0;
-      gap: 8px;
-    }
-    #addSwitchContainer input {
-      flex: 1;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    #addSwitchContainer button {
-      background: #2196f3;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      padding: 6px 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="switches.css" />
 </head>
 <body>
   <!-- HEADER -->
@@ -57,24 +14,50 @@
       <span class="rank-label">Sche</span>
       <span class="rank-title">Duler</span>
     </div>
+
+    <div class="menu-wrapper">
+      <button id="hamburger" class="hamburger-icon">&#9776;</button>
+      <div id="dropdownMenu" class="dropdown-menu">
+        <a href="index.html">Home</a>
+        <a href="#">About</a>
+        <button id="menuLogout">Logout</button>
+        <button id="menuDelete" style="color:red;">Delete Account</button>
+      </div>
+    </div>
   </header>
 
+  <!-- PROFILE INFO -->
   <main>
     <div class="profile-card">
       <h2>Your Profile</h2>
       <p><strong>Name:</strong> <span id="profileName">-</span></p>
-      <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
+      <p>
+        <strong>Email:</strong>
+        <span id="profileEmail" style="display:none;">-</span>
+        <button id="toggleEmailBtn" class="view-btn">View</button>
+      </p>
     </div>
 
-    <div class="profile-card" id="switchSection">
-      <h2>My Switches</h2>
-      <div id="switchList"></div>
+    <div class="profile-actions">
+      <a href="index.html">← Back to Home</a>
+    </div>
 
-      <div id="addSwitchContainer">
-        <input type="text" id="newSwitchLabel" placeholder="New switch label..." maxlength="30" />
-        <button id="addSwitchBtn">Add Switch</button>
+    <!-- SWITCHES SECTION -->
+    <section id="myAds">
+      <h2>Switches</h2>
+
+      <!-- Add Switch Inline Form -->
+      <div id="addSwitchFormContainer" class="add-switch-form">
+        <input type="text" id="newSwitchLabel" placeholder="Switch label..." maxlength="20">
+        <button id="addSwitchBtn" class="action-small">Add</button>
+        <small>(Max 5 switches)</small>
       </div>
-    </div>
+
+      <div id="userAds">
+        <p>Loading your switches...</p>
+      </div>
+    </section>
+
   </main>
 
   <footer class="footer">
@@ -83,80 +66,164 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const hamburger = document.getElementById("hamburger");
+      const menuLogout = document.getElementById("menuLogout");
+      const menuDelete = document.getElementById("menuDelete");
+      const toggleEmailBtn = document.getElementById("toggleEmailBtn");
+      const profileEmail = document.getElementById("profileEmail");
+      const addSwitchBtn = document.getElementById("addSwitchBtn");
+      const switchesContainer = document.getElementById("userAds");
+      const newSwitchInput = document.getElementById("newSwitchLabel");
+
+      hamburger.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".menu-wrapper")) dropdownMenu.classList.remove("show");
+      });
+
       const user = JSON.parse(localStorage.getItem("user"));
-      if (!user) return window.location.href = "index.html";
+      if (!user) window.location.href = "index.html";
 
-      document.getElementById("profileName").textContent = user.name;
-      document.getElementById("profileEmail").textContent = user.email;
+      document.getElementById("profileName").textContent = user.name || "User";
+      profileEmail.textContent = user.email || "Unknown";
 
-      const switchList = document.getElementById("switchList");
-      const addBtn = document.getElementById("addSwitchBtn");
-      const newLabelInput = document.getElementById("newSwitchLabel");
+      // Toggle email visibility
+      toggleEmailBtn.addEventListener("click", () => {
+        if (profileEmail.style.display === "none") {
+          profileEmail.style.display = "inline";
+          toggleEmailBtn.textContent = "Hide";
+        } else {
+          profileEmail.style.display = "none";
+          toggleEmailBtn.textContent = "View";
+        }
+      });
 
-      // Fetch and render switches
+      // Logout
+      menuLogout.addEventListener("click", () => {
+        localStorage.removeItem("user");
+        window.location.href = "index.html";
+      });
+
+      // Delete Account
+      menuDelete.addEventListener("click", async () => {
+        const confirmDel = confirm("⚠️ Are you sure you want to delete your account? This cannot be undone!");
+        if (!confirmDel) return;
+
+        try {
+          const res = await fetch(`/api/auth?action=delete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          } else alert("Failed: " + (data.error || "Unknown error"));
+        } catch { alert("Request failed."); }
+      });
+
+      // Load switches and render
       async function loadSwitches() {
-        const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
-        const switches = await res.json();
-        switchList.innerHTML = "";
+        switchesContainer.innerHTML = "<p>Loading your switches...</p>";
+        try {
+          const res = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
+          const data = await res.json();
 
-        switches.forEach(sw => {
-          const div = document.createElement("div");
-          div.className = "switch-container";
+          if (!Array.isArray(data) || data.length === 0) {
+            switchesContainer.innerHTML = "<p>No switches yet. Add one below.</p>";
+            return;
+          }
 
-          const label = document.createElement("span");
-          label.textContent = sw.label;
+          switchesContainer.innerHTML = data.map(s => `
+            <div class="switch-row">
+              <div class="switch-info">
+                <strong class="switch-label">${escapeHtml(s.label)}</strong>
+                <small class="switch-ts">${s.timestamp || ''}</small>
+              </div>
+              <div class="switch-actions">
+                <button class="toggle-btn" data-label="${escapeAttr(s.label)}">${s.state === 'on' ? 'Turn Off' : 'Turn On'}</button>
+                <button class="remove-btn" data-label="${escapeAttr(s.label)}">Remove</button>
+              </div>
+            </div>
+          `).join("");
 
-          const toggleBtn = document.createElement("button");
-          toggleBtn.className = `toggle-btn ${sw.state}`;
-          toggleBtn.textContent = sw.state.toUpperCase();
-          toggleBtn.addEventListener("click", async () => {
-            const newState = sw.state === "on" ? "off" : "on";
-            await fetch("/api/esp", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: user.email,
-                label: sw.label,
-                state: newState
-              })
+          document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const label = e.currentTarget.dataset.label;
+              const newState = e.currentTarget.textContent.includes('Off') ? 'off' : 'on';
+              await updateSwitch(user.email, label, newState);
+              await loadSwitches();
             });
-            sw.state = newState;
-            toggleBtn.className = `toggle-btn ${newState}`;
-            toggleBtn.textContent = newState.toUpperCase();
           });
 
-          const deleteBtn = document.createElement("button");
-          deleteBtn.className = "delete-btn";
-          deleteBtn.textContent = "Delete";
-          deleteBtn.addEventListener("click", async () => {
-            await fetch(`/api/esp?email=${encodeURIComponent(user.email)}&label=${encodeURIComponent(sw.label)}`, {
-              method: "DELETE"
+          document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const label = e.currentTarget.dataset.label;
+              await removeSwitch(user.email, label);
+              await loadSwitches();
             });
-            div.remove();
           });
 
-          div.appendChild(label);
-          div.appendChild(toggleBtn);
-          div.appendChild(deleteBtn);
-          switchList.appendChild(div);
-        });
+        } catch { switchesContainer.innerHTML = "<p>Failed to load switches.</p>"; }
       }
 
-      await loadSwitches();
+      // Add switch inline
+      addSwitchBtn.addEventListener("click", async () => {
+        const label = newSwitchInput.value.trim();
+        if (!label) return alert("Enter a label");
 
-      addBtn.addEventListener("click", async () => {
-        const label = newLabelInput.value.trim();
-        if (!label) return;
         // Check limit
-        if (switchList.children.length >= 5) return alert("Max 5 switches allowed!");
-        await fetch("/api/esp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: user.email, label, state: "off" })
-        });
-        newLabelInput.value = "";
-        await loadSwitches();
+        try {
+          const resCount = await fetch(`/api/esp?email=${encodeURIComponent(user.email)}`);
+          const list = await resCount.json();
+          if (Array.isArray(list) && list.length >= 5) {
+            return alert("Switch limit reached (5)");
+          }
+        } catch {}
+
+        const ok = await updateSwitch(user.email, label, 'off');
+        if (ok) {
+          newSwitchInput.value = '';
+          loadSwitches();
+        }
       });
+
+      async function updateSwitch(email, label, state) {
+        try {
+          const res = await fetch('/api/esp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, label, state })
+          });
+          const data = await res.json();
+          if (data.error) alert("Error: " + data.error);
+          return data.success;
+        } catch { alert("Request failed."); return false; }
+      }
+
+      async function removeSwitch(email, label) {
+        try {
+          const res = await fetch('/api/esp', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, label })
+          });
+          const data = await res.json();
+          if (data.error) alert("Error: " + data.error);
+          return data.success;
+        } catch { alert("Request failed."); return false; }
+      }
+
+      // HTML escape helpers
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+      function escapeAttr(str) { return escapeHtml(str).replace(/"/g,'&quot;'); }
+
+      // Initial load
+      loadSwitches();
     });
   </script>
 </body>
