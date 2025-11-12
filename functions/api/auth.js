@@ -199,8 +199,8 @@ export async function onRequest(context) {
 
       // create JWT
       const exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60; // 24h
-      const token = await generateJWT({ id: user.id, email: user.email, exp });
-
+     /* const token = await generateJWT({ id: user.id, email: user.email, exp });*/
+      const token = await generateJWT({ id: user.id, email: user.email, name: user.name, exp });
       const safeUser = {
         id: user.id,
         name: user.name,
