@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="use.css" />
 </head>
 <body>
-  <!-- Header (matches your other pages) -->
   <header class="header-bar">
     <div class="rank-display">
       <span class="rank-label">Sche</span><span class="rank-title">Duler</span>
@@ -18,13 +17,10 @@
     <button id="categoryBtn" class="hamburger-icon">&#9776;</button>
   </div>
 
-  <!-- Re-using same drawer markup (keeps menu behavior consistent) -->
   <div id="categoryDrawer" class="category-drawer">
     <button class="category-close" id="closeCategory">&times;</button>
     <center><h3>User Menu</h3></center>
     <ul class="user-menu-list">
-      <li id="menuLogin-wrapper">
-        <button id="menuLogin" class="linkish">Login</button>
       </li>
       <li id="menuProfile" style="display:none;"><a href="profile.html">Profile</a></li>
       <li id="menuHowToUse"><a href="use.html">How to Use</a></li>
@@ -37,16 +33,17 @@
 
   <main class="use-main">
     <section class="hero">
-      <h1>How to use ScheDuler IoT (Quick Start)</h1>
+      <h1>How to use ScheDuler IoT (Quick Start)</h1><br>
+       <center><p class="tagline" style="color:red;">(Do not Enter<b style="color:#0ff;"> Real Info</b> <b style="color:#0ff;">as it's a</b> demo project.)</center><br>
       <p class="lead">Step-by-step demo instructions to add devices and control switches from the web.</p>
     </section>
 
     <section class="card">
       <h2>1. Create account &amp; Login</h2>
       <ol class="steps">
-        <li><strong>Sign up</strong> via <code>signup.html</code>. You’ll be shown a <mark class="mono">recovery code</mark> — copy it and keep it safe.</li>
-        <li><strong>Login</strong> from the main page or the drawer. After login you land on <code>profile.html</code>.</li>
-        <li>On successful login the site stores your profile in <code>localStorage</code> for demo session handling.</li>
+        <li><strong>Sign up</strong> via <code>signup</code>. You’ll be shown a <mark class="mono">recovery code</mark> — copy it and keep it safe.</li>
+        <li><strong>Login</strong> from the main page or the drawer. After login you land on <code>profile</code>.</li>
+        <li>On successfull signup your data are stored safely using <code>secret session tokens</code> for better security.</li>
       </ol>
     </section>
 
@@ -61,7 +58,7 @@
     </section>
 
     <section class="card">
-      <h2>3. Add Switches (max 5)</h2>
+      <h2>3. Add Switches (max 5 for demo)</h2>
       <ol class="steps">
         <li>In <strong>Profile → Switches</strong> enter a label (e.g. <em>Room Light</em>) and click <strong>Add Switch</strong>.</li>
         <li>Each label is unique per user. The API enforces up to 5 switches per user.</li>
@@ -73,9 +70,9 @@
       <h2>4. Turn On / Off — How it works</h2>
       <ol class="steps">
         <li>Click the <strong>Turn On</strong> / <strong>Turn Off</strong> button next to a switch. The UI updates the state and calls your API:<br>
-          <code class="callout">POST /api/esp { "email": "...", "label": "Room Light", "state": "on" }</code>
         </li>
-        <li>That API updates the database. For demo mode there is no direct hardware control until an actual ESP device polls the server (see Polling section).</li>
+        <li>That API updates the database. For demo mode there is no direct hardware control until an actual ESP device polls the server or implement Websocket(see Polling section).</li>
+       <center> <li style="color: red"> After Cloudflare wokers conversion, websocket will be implemented.</li></center>
       </ol>
     </section>
 
@@ -109,7 +106,7 @@
 
     <section class="card about" id="about-section">
       <h2>About this Demo</h2>
-      <p>This project is a lightweight demo to show how a web app can manage labeled switches for remote devices. It is intended for demonstrations and learning — As real polling ,websocket etc will induce charges. </p>
+      <p>This project is a lightweight demo to show how a web app can manage labeled switches,set timers, and control remote devices. It is intended for demonstrations and learning — As real polling ,websocket etc will induce charges. </p>
     </section>
 
     <footer class="small-footer">
