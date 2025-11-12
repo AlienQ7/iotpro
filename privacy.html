@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Privacy Policy | ScheDuler IoT</title>
+  <link rel="stylesheet" href="privacy.css" />
+</head>
+<body>
+  <!-- Header (same design) -->
+  <header class="header-bar">
+    <div class="rank-display">
+      <span class="rank-label">Sche</span><span class="rank-title">Duler</span>
+    </div>
+  </header>
+
+  <div class="menu-wrapper">
+    <button id="categoryBtn" class="hamburger-icon">&#9776;</button>
+  </div>
+
+  <!-- Drawer -->
+  <div id="categoryDrawer" class="category-drawer">
+    <button class="category-close" id="closeCategory">&times;</button>
+    <center><h3>User Menu</h3></center>
+    <ul class="user-menu-list">
+      <li id="menuLogin-wrapper">
+        <button id="menuLogin" class="linkish">Login</button>
+      </li>
+      <li id="menuProfile" style="display:none;"><a href="profile.html">Profile</a></li>
+      <li><a href="use.html">How to Use</a></li>
+      <li><a href="privacy.html">Privacy Policy</a></li>
+      <li><a href="#about-section">About</a></li>
+      <li id="menuLogout" style="display:none;">Logout</li>
+    </ul>
+  </div>
+  <div id="overlay" class="overlay"></div>
+
+  <main class="privacy-main">
+    <section class="hero">
+      <h1>Privacy Policy</h1>
+      <p class="lead">ScheDuler IoT Demo Platform</p>
+    </section>
+
+    <section class="card">
+      <h2>1. Overview</h2>
+      <p>
+        This project is a <strong>demonstration IoT control platform</strong>.  
+        It showcases how a secure frontend and backend can manage users and devices using
+        modern web technologies. It is designed for testing, learning, and demonstration — 
+        not for handling sensitive personal data or production-grade use.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>2. Data Collected</h2>
+      <ul class="steps">
+        <li><strong>Account Information:</strong> Username, email, and (optionally) phone number entered at signup.</li>
+        <li><strong>Device Data:</strong> Each device or switch name you add (label, state, timestamps).</li>
+        <li><strong>Session Info:</strong> Temporary login sessions stored securely using <code>JWT</code>.</li>
+        <li><strong>Recovery Code:</strong> A one-time generated code for account recovery purposes, stored securely (hashed) and visible only once during signup.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>3. Security &amp; Data Handling</h2>
+      <ul class="steps">
+        <li><strong>Database (D1):</strong> All user and device data is stored in a <code>D1</code> database managed by Cloudflare. Each user record is isolated and linked via a unique identifier.</li>
+        <li><strong>Key-Value (KV):</strong> Used for session handling or lightweight caching when required.</li>
+        <li><strong>Password Hashing:</strong> User passwords are never stored in plain text. Each password is securely hashed using an algorithm such as <code>bcrypt</code> or similar salted hash before saving to D1.</li>
+        <li><strong>JWT Authentication:</strong> After login, a signed JSON Web Token (<code>JWT</code>) is issued to verify user identity for each request without exposing credentials.</li>
+        <li><strong>Recovery System:</strong> A unique one-time recovery code is generated on signup and shown once. It is stored in hashed form; the original is never retrievable by anyone (including the admin).</li>
+        <li><strong>Data Transmission:</strong> All communication is handled via secure HTTPS when deployed. For local demo mode (e.g., <code>0.0.0.0:8080</code>), SSL is not enforced — this is expected in a development environment.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>4. Usage &amp; Retention</h2>
+      <ul class="steps">
+        <li>User accounts and device entries remain stored until manually deleted or until the demo database is reset.</li>
+        <li>Switch states are only retained for demonstration and testing purposes.</li>
+        <li>JWT sessions automatically expire after a set time (e.g., 24 hours) or upon logout.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>5. Limitations</h2>
+      <p>
+        This project is intended for <strong>testing and learning</strong>.  
+        While strong encryption and hashing practices are used, it is not a production-ready system.  
+        Do not store or use sensitive or personal data. 
+        Any data loss due to database resets or local testing is not permanent or recoverable.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>6. Your Control</h2>
+      <ul class="steps">
+        <li>You can delete your account or remove devices at any time.</li>
+        <li>Upon deletion, your related entries in D1 (user + device) are permanently removed.</li>
+        <li>To reset your password, use your recovery code or contact the project maintainer (for demo support only).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>7. Transparency</h2>
+      <p>
+        The full backend and frontend code are openly inspectable, so you can verify how data is stored,
+        hashed, and transmitted. This openness ensures transparency and user trust.
+      </p>
+    </section>
+
+    <section class="card about" id="about-section">
+      <h2>About ScheDuler IoT</h2>
+      <p>
+        ScheDuler IoT is a project showcasing how web-based dashboards can safely interact with IoT devices using simple,
+        secure endpoints and a reactive UI. Built using Cloudflare Workers, D1, KV storage, JWT, and standard web encryption methods.
+      </p>
+    </section>
+
+    <footer class="small-footer">
+      <p>Return to <a href="index.html">Home</a> or see <a href="use.html">How to Use</a>.</p>
+    </footer>
+  </main>
+
+<script>
+  // menu logic same as before
+  document.addEventListener('DOMContentLoaded', () => {
+    const categoryBtn = document.getElementById('categoryBtn');
+    const categoryDrawer = document.getElementById('categoryDrawer');
+    const closeCategory = document.getElementById('closeCategory');
+    const overlay = document.getElementById('overlay');
+
+    const openDrawer = ()=>{categoryDrawer.classList.add('open');overlay.classList.add('show');};
+    const closeDrawer = ()=>{categoryDrawer.classList.remove('open');overlay.classList.remove('show');};
+    categoryBtn && categoryBtn.addEventListener('click', openDrawer);
+    closeCategory && closeCategory.addEventListener('click', closeDrawer);
+    overlay && overlay.addEventListener('click', closeDrawer);
+
+    function updateHeader(){
+      const user=JSON.parse(localStorage.getItem("user"));
+      const menuLogin=document.getElementById('menuLogin');
+      const menuProfile=document.getElementById('menuProfile');
+      const menuLogout=document.getElementById('menuLogout');
+      if(user){
+        if(menuLogin)menuLogin.style.display='none';
+        if(menuProfile)menuProfile.style.display='block';
+        if(menuLogout)menuLogout.style.display='block';
+      }else{
+        if(menuLogin)menuLogin.style.display='block';
+        if(menuProfile)menuProfile.style.display='none';
+        if(menuLogout)menuLogout.style.display='none';
+      }
+    }
+    updateHeader();
+  });
+</script>
+</body>
+</html>

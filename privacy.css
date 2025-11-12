@@ -1,0 +1,58 @@
+/* privacy.css — consistent dark neon look */
+
+:root{
+  --bg: #060617;
+  --card: #0f1220;
+  --accent: #ffd700;
+  --neon: #4af;
+  --muted: #bfbfcc;
+  --radius: 12px;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: 'Poppins', 'Orbitron', sans-serif;
+  background: linear-gradient(180deg, #070619 0%, #0c0520 60%);
+  color:#eaeef8;
+}
+
+/* header */
+.header-bar{display:flex;align-items:center;padding:12px 18px}
+.rank-display{font-weight:700;display:flex;gap:6px}
+.rank-label{color:var(--accent);font-size:1.2rem}
+.rank-title{color:#fff;font-size:1.2rem}
+
+.menu-wrapper{position:fixed;top:14px;right:18px}
+.hamburger-icon{background:none;border:2px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:10px;font-size:18px;cursor:pointer}
+
+/* drawer */
+.category-drawer{position:fixed;top:0;right:-320px;width:300px;height:100%;background:var(--card);padding:22px;transition:0.35s;box-shadow:0 10px 30px rgba(0,0,0,0.6);z-index:999}
+.category-drawer.open{right:0}
+.category-close{background:none;border:none;color:var(--accent);font-size:22px;position:absolute;left:12px;top:12px;cursor:pointer}
+.user-menu-list{list-style:none;padding:0;margin-top:40px}
+.user-menu-list li{padding:10px 0}
+.user-menu-list a,.user-menu-list button.linkish{color:var(--accent);text-decoration:none;background:none;border:none;cursor:pointer;font-size:0.96rem;display:block;text-align:left;width:100%}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;z-index:900}
+.overlay.show{display:block}
+
+/* content */
+.privacy-main{max-width:900px;margin:28px auto;padding:20px}
+.hero{text-align:center;margin-bottom:20px}
+.hero h1{font-size:1.9rem;color:var(--neon);text-shadow:0 0 12px rgba(74,170,255,0.12)}
+.lead{color:var(--muted)}
+
+.card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,215,0,0.06);padding:16px;border-radius:var(--radius);margin:14px 0;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+.card h2{color:var(--accent);margin:0 0 10px}
+.card p{color:#e5ebff;line-height:1.5}
+.steps{margin:8px 0 0 18px;color:#dbe6ff}
+.steps li{margin:8px 0}
+
+.small-footer{text-align:center;margin:22px 0;color:var(--muted);font-size:0.9rem}
+.small-footer a{color:var(--neon)}
+
+@media (max-width:720px){
+  .privacy-main{padding:14px;margin:14px}
+  .card{padding:12px}
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>How to Use | ScheDuler IoT</title>
+  <link rel="stylesheet" href="use.css" />
+</head>
+<body>
+  <!-- Header (matches your other pages) -->
+  <header class="header-bar">
+    <div class="rank-display">
+      <span class="rank-label">Sche</span><span class="rank-title">Duler</span>
+    </div>
+  </header>
+
+  <div class="menu-wrapper">
+    <button id="categoryBtn" class="hamburger-icon">&#9776;</button>
+  </div>
+
+  <!-- Re-using same drawer markup (keeps menu behavior consistent) -->
+  <div id="categoryDrawer" class="category-drawer">
+    <button class="category-close" id="closeCategory">&times;</button>
+    <center><h3>User Menu</h3></center>
+    <ul class="user-menu-list">
+      <li id="menuLogin-wrapper">
+        <button id="menuLogin" class="linkish">Login</button>
+      </li>
+      <li id="menuProfile" style="display:none;"><a href="profile.html">Profile</a></li>
+      <li id="menuHowToUse"><a href="use.html">How to Use</a></li>
+      <li><a href="privacy.html">Privacy Policy</a></li>
+      <li><a href="#about-section">About</a></li>
+      <li id="menuLogout" style="display:none;">Logout</li>
+    </ul>
+  </div>
+  <div id="overlay" class="overlay"></div>
+
+  <main class="use-main">
+    <section class="hero">
+      <h1>How to use ScheDuler IoT (Quick Start)</h1>
+      <p class="lead">Step-by-step demo instructions to add devices and control switches from the web.</p>
+    </section>
+
+    <section class="card">
+      <h2>1. Create account &amp; Login</h2>
+      <ol class="steps">
+        <li><strong>Sign up</strong> via <code>signup.html</code>. You’ll be shown a <mark class="mono">recovery code</mark> — copy it and keep it safe.</li>
+        <li><strong>Login</strong> from the main page or the drawer. After login you land on <code>profile.html</code>.</li>
+        <li>On successful login the site stores your profile in <code>localStorage</code> for demo session handling.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>2. Add &amp; Connect a Device</h2>
+      <ol class="steps">
+        <li>Open <strong>Profile</strong> → go to <em>Devices</em> section.</li>
+        <li>Type a friendly device name or the device IP into the box and click <strong>Connect</strong>. This stores a demo connection in the site DB.</li>
+        <li>Connected device is saved in <code>localStorage</code> only for demo convenience — the worker/API also records a connection entry.</li>
+        <li>If you want to disconnect, click the <strong>❌</strong> button next to Connect.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>3. Add Switches (max 5)</h2>
+      <ol class="steps">
+        <li>In <strong>Profile → Switches</strong> enter a label (e.g. <em>Room Light</em>) and click <strong>Add Switch</strong>.</li>
+        <li>Each label is unique per user. The API enforces up to 5 switches per user.</li>
+        <li>New switch default state: <code>off</code>. You can toggle it after creation.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>4. Turn On / Off — How it works</h2>
+      <ol class="steps">
+        <li>Click the <strong>Turn On</strong> / <strong>Turn Off</strong> button next to a switch. The UI updates the state and calls your API:<br>
+          <code class="callout">POST /api/esp { "email": "...", "label": "Room Light", "state": "on" }</code>
+        </li>
+        <li>That API updates the database. For demo mode there is no direct hardware control until an actual ESP device polls the server (see Polling section).</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>5. Rename &amp; Remove</h2>
+      <ol class="steps">
+        <li>Click <strong>Rename</strong> — edit inline then blur to save the new label. This calls the API with <code>renameTo</code>.</li>
+        <li>Click <strong>Remove</strong> to delete the switch from your account (DELETE /api/esp).</li>
+        <li>Removed switches are deleted from the DB. They will no longer appear for your account.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>6. Polling (Demo → How the ESP reads commands)</h2>
+      <ol class="steps">
+        <li><strong>Polling</strong> means the ESP device periodically asks your server, “Any commands for me?” (example interval: <em>30s</em> for demo).</li>
+        <li>Polling works when the ESP is on the Internet (has Wi-Fi / SIM / NAT/port open depending on your setup). If the ESP is only on local network and not reachable, it cannot poll remotely.</li>
+        <li>When the ESP polls, your server can return the desired pin state for each labeled switch and the ESP applies it to the GPIO pins.</li>
+        <li><strong>Important (demo):</strong> Polling consumes simple HTTP requests; if you set very short intervals and many devices, you can hit Cloudflare Pages/Workers request/build limits. For a demo, 30s is reasonable.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>7. Quick Troubleshooting</h2>
+      <ul class="steps">
+        <li>If switches aren't changing on the device, make sure the ESP is connected to the Internet and polling the API URL.</li>
+        <li>If device shows “Not connected”, reconnect from the Profile → Devices box.</li>
+        <li>Check browser console for API errors; your endpoints return helpful JSON messages.</li>
+      </ul>
+    </section>
+
+    <section class="card about" id="about-section">
+      <h2>About this Demo</h2>
+      <p>This project is a lightweight demo to show how a web app can manage labeled switches for remote devices. It is intended for demonstrations and learning — As real polling ,websocket etc will induce charges. </p>
+    </section>
+
+    <footer class="small-footer">
+      <p>Need more? See <a href="privacy.html">Privacy Policy</a> or return <a href="index.html">Home</a>.</p>
+    </footer>
+  </main>
+
+<script>
+  // Keep drawer/menu behavior same as your other pages
+  document.addEventListener('DOMContentLoaded', () => {
+    const categoryBtn = document.getElementById('categoryBtn');
+    const categoryDrawer = document.getElementById('categoryDrawer');
+    const closeCategory = document.getElementById('closeCategory');
+    const overlay = document.getElementById('overlay');
+
+    function openDrawer() { categoryDrawer.classList.add('open'); overlay.classList.add('show'); }
+    function closeDrawer() { categoryDrawer.classList.remove('open'); overlay.classList.remove('show'); }
+
+    categoryBtn && categoryBtn.addEventListener('click', openDrawer);
+    closeCategory && closeCategory.addEventListener('click', closeDrawer);
+    overlay && overlay.addEventListener('click', closeDrawer);
+
+    // Keep login/profile toggle consistent with your other JS logic
+    function updateHeader() {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const menuLogin = document.getElementById('menuLogin');
+      const menuProfile = document.getElementById('menuProfile');
+      const menuLogout = document.getElementById('menuLogout');
+      if (user) {
+        if (menuLogin) menuLogin.style.display = 'none';
+        if (menuProfile) menuProfile.style.display = 'block';
+        if (menuLogout) menuLogout.style.display = 'block';
+      } else {
+        if (menuLogin) menuLogin.style.display = 'block';
+        if (menuProfile) menuProfile.style.display = 'none';
+        if (menuLogout) menuLogout.style.display = 'none';
+      }
+    }
+    updateHeader();
+  });
+</script>
+</body>
+</html>

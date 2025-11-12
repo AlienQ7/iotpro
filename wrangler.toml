@@ -12,3 +12,6 @@ database_id = "b03ce1d7-c83e-4ab7-a636-fef9e345694c"
 [[kv_namespaces]]
 binding = "USERS"
 id = "5867a4f1be824058ae7365d1b20ed815"
+
+[vars]
+my_secret = "your_super_secret_key"

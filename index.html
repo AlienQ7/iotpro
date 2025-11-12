@@ -9,74 +9,100 @@
   </style>
 </head>
 <body>
-  <header class="header-bar">
-    <div class="rank-display"><span class="rank-label">Sche</span><span class="rank-title">Duler</span></div>
-  </header>
-
-  <div class="menu-wrapper">
-    <button id="categoryBtn" class="hamburger-icon">&#9776;</button>
+<header class="header-bar">
+  <div class="rank-display">
+    <span class="rank-label">Sche</span><span class="rank-title">Duler</span>
   </div>
+</header>
 
-  <div id="categoryDrawer" class="category-drawer">
-    <button class="category-close" id="closeCategory">&times;</button>
-    
-    <center><h3>Categories</h3></center>
-    <ul id="categoryList">
-      <li>Iot</li><li>Iow</li><li>Ioe</li></li>
-    </ul>
-    <hr style="border-color: rgba(255, 215, 0, 0.5); margin: 15px 0;" />
-   <center><h3>User Menu</h3></center>
-    <ul class="user-menu-list">
-         <li id="menuLogin-wrapper">
-    <button id="menuLogin" style="background: none; border: none; color: var(--neon-gold); font-size: 1rem; padding: 0; cursor: pointer; display: block; width: 100%; text-align: left;">
+<div class="menu-wrapper">
+  <button id="categoryBtn" class="hamburger-icon">&#9776;</button>
+</div>
+
+<div id="categoryDrawer" class="category-drawer">
+  <button class="category-close" id="closeCategory">&times;</button>
+
+  <center><h3>User Menu</h3></center>
+  <ul class="user-menu-list">
+    <!-- Login (visible when logged out) -->
+    <li id="menuLogin-wrapper">
+      <button id="menuLogin" style="background:none; border:none; color:var(--neon-gold); font-size:1rem; padding:0; cursor:pointer; display:block; width:100%; text-align:left;">
         Login
-    </button>
-</li>
-        <li id="menuProfile" style="display:none;"><a href="profile.html">Profile</a></li>
-        <li><a href="#about-section">About</a></li>
-        <li id="menuLogout" style="display:none; text-color: #fbbf24">Logout</li>
-    </ul>
-  </div>
-  <div id="overlay" class="overlay"></div>
+      </button>
+    </li>
 
-   <main id="mainContent">
-    <section class="info-section">
-      <h2 id="iot-heading">Welcome to ScheDuler IoT Control</h2>
-      <p class="tagline">Your secure, centralized platform for managing connected devices.</p>
-    </section>
+    <!-- Profile (visible when logged in) -->
+    <li id="menuProfile" style="display:none;">
+      <a href="profile.html">Profile</a>
+    </li>
 
-    <section class="info-card-container login-callout-section">
-        <div style="text-align:center; padding: 20px 0;">
-            <button id="mainLoginBtn" class="load-more" style="width: 90%; max-width: 300px;">
-                Start Controlling Your Devices (Login)
-            </button>
-        </div>
-    </section>
-    
-    <section class="info-card-container">
-      <div class="info-card">
-        <h3>What is IoT?</h3>
-        <p>The Internet of Things (IoT) is a system of interconnected computing devices, mechanical and digital machines, objects, animals, or people that are provided with unique identifiers (UIDs) and the ability to transfer data over a network without requiring human-to-human or human-to-computer interaction. This site allows you to bridge that gap.</p>
-      </div>
+    <!-- Logout (visible when logged in) -->
+    <li id="menuLogout" style="display:none;">Logout</li>
 
-      <div class="info-card">
-        <h3>Key Functions</h3>
-        <ul>
-          <li>**Real-Time Monitoring:** View live data and status updates from all connected devices.</li>
-          <li>**Remote Control:** Turn devices on/off, adjust settings, and schedule operations from anywhere.</li>
-          <li>**Security:** Data transmission is protected using modern encryption standards for complete security and privacy.</li>
-          <li>**Profile Management:** Set up custom device groups and automate routines tailored to your needs.</li>
-        </ul>
-      </div>
+    <!-- How to Use -->
+    <li><a href="use.html">How to Use</a></li>
 
-      <div class="info-card" id="about-section"> 
-        <h3>About This Project</h3>
-        <p>This platform is a **complete IoT Control Solution**, featuring a secure, responsive front-end and a dedicated **backend** for robust user and device management. Features include **account creation, secure login, real-time data handling, and remote device control**. It is designed for simplicity, security, and maximum user control.</p>
-        <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">**How to use:** Login to access your profile and device dashboards. Securely add, monitor, and control your smart devices from one centralized place.</p>
-      </div>
-    </section>
-  </main>
+    <!-- About -->
+    <li><a href="#about-section">About</a></li>
 
+    <!-- Privacy Policy -->
+    <li><a href="privacy.html">Privacy Policy</a></li>
+  </ul>
+</div>
+
+<div id="overlay" class="overlay"></div>
+    <main id="mainContent">
+  <section class="info-section">
+    <h2 id="iot-heading" style="color:#00ffcc;">Welcome to <b style="color:#0ff;">ScheDuler IoT Control</b></h2>
+    <p class="tagline" style="color:#ccc;">Your <b style="color:#0ff;">secure</b>, <b style="color:#0ff;">centralized</b> platform for managing connected devices.</p>
+  </section>
+
+  <section class="info-card-container login-callout-section">
+    <div style="text-align:center; padding: 20px 0;">
+      <button id="mainLoginBtn" class="load-more" style="width: 90%; max-width: 300px;">
+        Start Controlling Your Devices (Login)
+      </button>
+    </div>
+  </section>
+  
+  <section class="info-card-container">
+    <div class="info-card">
+      <h3 style="color:#00ffcc;">💡 What is IoT?</h3>
+      <p>
+        The <b style="color:#0ff;">Internet of Things (IoT)</b> connects physical devices — sensors, switches, and machines — to the internet.  
+        It allows them to collect, send, and act on data without human intervention.  
+        This makes systems more <b style="color:#0ff;">efficient, responsive,</b> and <b style="color:#0ff;">automated</b>.  
+        ScheDuler IoT bridges that gap, letting you control your devices directly from your browser.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h3 style="color:#00ffcc;">⚙️ Key Functions</h3>
+      <ul style="list-style-type:'🚀 '; margin-left:1em;">
+        <li><b style="color:#0ff;">Real-Time Monitoring:</b> Instantly view live device data and status updates.</li>
+        <li><b style="color:#0ff;">Remote Control:</b> Turn devices <b>on/off</b>, adjust configurations, and schedule actions from anywhere.</li>
+        <li><b style="color:#0ff;">Security:</b> Data and sessions are protected with <b>token-based authentication</b> and encryption.</li>
+        <li><b style="color:#0ff;">Profile Management:</b> Organize device groups, automate routines, and track performance easily.</li>
+        <li><b style="color:#0ff;">Recovery System:</b> Built-in <b>password reset</b> ensures account access is always recoverable.</li>
+        <li><b style="color:#0ff;">Free & Open:</b> User get Free device connection and switches to add.</li>
+      </ul>
+    </div>
+
+    <div class="info-card" id="about-section">
+      <h3 style="color:#00ffcc;">📘 About This Project</h3>
+      <p>
+        <b style="color:#0ff;">ScheDuler</b> (ScheDuler IoT Control) is a lightweight webapp combining  
+        <b style="color:#0ff;">Cloudflare Pages(future is Workers)</b> with <b style="color:#0ff;">ESP-based IoT devices</b> for real-time control and automation.  
+        Designed for simplicity, it offers <b style="color:#0ff;">secure login, instant device control,</b> and <b style="color:#0ff;">live feedback</b> —  
+        all from one centralized dashboard.
+      </p>
+      <p style="margin-top: 15px; color: #aaa; font-size: 0.9em;">
+        <b style="color:#0ff;">How to use:</b> Login to access your personal dashboard.  
+        Securely add, monitor, and control your smart devices in seconds.
+      </p>
+    </div>
+  </section>
+</main>
   <footer class="footer">
     <p><a href="#about-section" style="color:#fbbf24; margin-right:10px;">About</a> | <a href="#" style="color:#fbbf24;">Some List</a></p>
     <p>&copy; 2025 Scheduler</p>
@@ -98,252 +124,93 @@
     </div>
   </div>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      
-      const categoryBtn = document.getElementById("categoryBtn");
-      const categoryDrawer = document.getElementById("categoryDrawer");
-      const closeCategory = document.getElementById("closeCategory");
-      const overlay = document.getElementById("overlay");
-      const mainContent = document.getElementById("mainContent");
+document.addEventListener("DOMContentLoaded", () => {
+  const categoryBtn = document.getElementById("categoryBtn");
+  const categoryDrawer = document.getElementById("categoryDrawer");
+  const closeCategory = document.getElementById("closeCategory");
+  const overlay = document.getElementById("overlay");
+  const mainContent = document.getElementById("mainContent");
 
-      // --- LOGIN/AUTH CONSTANTS ---
-      // 1. menuLogin is the button in the drawer
-      const menuLogin = document.getElementById("menuLogin"); 
-      // 2. mainLoginBtn is the button on the landing page (New ID from your last HTML)
-      const mainLoginBtn = document.getElementById("mainLoginBtn"); 
-      
-      const menuLogout = document.getElementById("menuLogout");
-      const menuProfile = document.getElementById("menuProfile");
-      const loginModal = document.getElementById("loginModal");
-      const closeLoginModal = document.getElementById("closeLoginModal");
-      const loginForm = document.getElementById("loginForm");
-      
-      // --- Drawer Toggle Functions ---
-      function openDrawer() {
-        categoryDrawer.classList.add("open");
-        overlay.classList.add("show");
-        // mainContent.classList.add("shifted"); 
-      }
-      function closeDrawer() {
-        categoryDrawer.classList.remove("open");
-        overlay.classList.remove("show");
-        // mainContent.classList.remove("shifted"); 
-      }
-      
-      // --- Drawer Event Listeners ---
-      categoryBtn.addEventListener("click", openDrawer);
-      closeCategory.addEventListener("click", closeDrawer);
-      overlay.addEventListener("click", closeDrawer);
-      
-      // --- Auth Functions ---
-      function updateHeader() {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user) {
-          menuLogin.style.display = "none";
-          menuProfile.style.display = "block";
-          menuLogout.style.display = "block";
-          
-          // Hide the main login button when logged in
-          if (mainLoginBtn) mainLoginBtn.style.display = "none"; 
-        } else {
-          menuLogin.style.display = "block";
-          menuProfile.style.display = "none";
-          menuLogout.style.display = "none";
-          
-          // Show the main login button when logged out
-          if (mainLoginBtn) mainLoginBtn.style.display = "block"; 
-        }
-      }
-      updateHeader();
-      
-      // --- LOGIN HANDLER FUNCTION ---
-      const openLoginModal = () => {
-          closeDrawer(); // Close the menu drawer
-          loginModal.style.display = "flex"; // Open the modal
-          // No need for hideSearchBar() since you deleted the search bar
-      };
+  const menuLogin = document.getElementById("menuLogin"); 
+  const mainLoginBtn = document.getElementById("mainLoginBtn"); 
+  const menuLogout = document.getElementById("menuLogout");
+  const menuProfile = document.getElementById("menuProfile");
+  const loginModal = document.getElementById("loginModal");
+  const closeLoginModal = document.getElementById("closeLoginModal");
+  const loginForm = document.getElementById("loginForm");
 
-      // Assign the handler to BOTH buttons
-      if (menuLogin) menuLogin.addEventListener("click", openLoginModal);
-      if (mainLoginBtn) mainLoginBtn.addEventListener("click", openLoginModal); 
-      
-      // --- MODAL CLOSE HANDLERS ---
-      closeLoginModal.addEventListener("click", () => {
-          loginModal.style.display = "none";
-          // No need for showSearchBar()
-      });
-      loginModal.addEventListener("click", (e) => { 
-          if (e.target === loginModal) {
-              loginModal.style.display = "none"; 
-              // No need for showSearchBar()
-          }
-      });
+  // --- Drawer Toggle Functions ---
+  function openDrawer() {
+    categoryDrawer.classList.add("open");
+    overlay.classList.add("show");
+  }
+  function closeDrawer() {
+    categoryDrawer.classList.remove("open");
+    overlay.classList.remove("show");
+  }
 
-      // LOGOUT HANDLER
-      menuLogout.addEventListener("click", () => {
-        localStorage.removeItem("user");
-        updateHeader();
-        closeDrawer(); 
-      });
+  categoryBtn.addEventListener("click", openDrawer);
+  closeCategory.addEventListener("click", closeDrawer);
+  overlay.addEventListener("click", closeDrawer);
 
-      // --- Login Form Submission (Kept Unchanged) ---
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        try {
-          const res = await fetch("/api/auth", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "login", email, password }),
-          });
-          const data = await res.json();
-          if (!res.ok) return alert(data.error || "Login failed");
-          localStorage.setItem("user", JSON.stringify(data.user));
-          loginModal.style.display = "none";
-          window.location.href = "profile.html";
-        } catch { alert("Network error."); }
+  // --- Auth Functions ---
+  function updateHeader() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      menuLogin.style.display = "none";
+      menuProfile.style.display = "block";
+      menuLogout.style.display = "block";
+      if (mainLoginBtn) mainLoginBtn.style.display = "none"; 
+    } else {
+      menuLogin.style.display = "block";
+      menuProfile.style.display = "none";
+      menuLogout.style.display = "none";
+      if (mainLoginBtn) mainLoginBtn.style.display = "block"; 
+    }
+  }
+  updateHeader();
+
+  // --- LOGIN MODAL ---
+  const openLoginModal = () => {
+    closeDrawer();
+    loginModal.style.display = "flex";
+  };
+  if (menuLogin) menuLogin.addEventListener("click", openLoginModal);
+  if (mainLoginBtn) mainLoginBtn.addEventListener("click", openLoginModal); 
+  closeLoginModal.addEventListener("click", () => (loginModal.style.display = "none"));
+  loginModal.addEventListener("click", (e) => { if (e.target === loginModal) loginModal.style.display = "none"; });
+
+  // --- LOGOUT ---
+  menuLogout.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    updateHeader();
+    closeDrawer();
+  });
+
+  // --- LOGIN FORM SUBMIT ---
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "login", email, password }),
       });
-      
-      // --- Removed all Load Ads functions and listeners ---
-    });
+      const data = await res.json();
+      if (!res.ok) return alert(data.error || "Login failed");
+
+      // Store JWT token
+      localStorage.setItem("token", data.token);
+      loginModal.style.display = "none";
+      window.location.href = "profile.html";
+    } catch {
+      alert("Network error.");
+    }
+  });
+});
 </script>
-
-<!--  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      
-      // --- REMOVED: const hamburger = document.getElementById("hamburger");
-      // --- REMOVED: const dropdownMenu = document.getElementById("dropdownMenu");
-      
-      const categoryBtn = document.getElementById("categoryBtn");
-      const categoryDrawer = document.getElementById("categoryDrawer");
-      const closeCategory = document.getElementById("closeCategory");
-      const overlay = document.getElementById("overlay");
-      const mainContent = document.getElementById("mainContent"); // Still used for shift effect
-
-      // --- LOGIN/AUTH CONSTANTS ---
-      // The element with the ID "menuLogin" is now the button inside the <li>
-      const menuLogin = document.getElementById("menuLogin"); 
-      const menuLogout = document.getElementById("menuLogout");
-      const menuProfile = document.getElementById("menuProfile");
-      const loginModal = document.getElementById("loginModal");
-      const closeLoginModal = document.getElementById("closeLoginModal");
-      const loginForm = document.getElementById("loginForm");
-      
-      // --- Search Bar Constant (For glowing box fix) ---
-      const mainSearchBar = document.getElementById("mainSearchBar"); 
-
-      // --- Drawer Toggle Functions ---
-      function openDrawer() {
-        categoryDrawer.classList.add("open");
-        overlay.classList.add("show");
-        // mainContent.classList.add("shifted"); // Uncomment if you add the CSS for this
-      }
-      function closeDrawer() {
-        categoryDrawer.classList.remove("open");
-        overlay.classList.remove("show");
-        // mainContent.classList.remove("shifted"); // Uncomment if you add the CSS for this
-      }
-      
-      // --- Search Bar Toggle for Glowing Box Fix ---
-      function hideSearchBar() {
-        if (mainSearchBar) mainSearchBar.style.display = "none"; 
-      }
-      function showSearchBar() {
-        // Set back to flex to match your .search-bar CSS
-        if (mainSearchBar) mainSearchBar.style.display = "flex"; 
-      }
-
-      // --- Drawer Event Listeners ---
-      categoryBtn.addEventListener("click", openDrawer);
-      closeCategory.addEventListener("click", closeDrawer);
-      overlay.addEventListener("click", closeDrawer);
-
-      // --- REMOVED OLD DROPDOWN LOGIC ---
-      // hamburger.addEventListener("click", ...)
-      // document.addEventListener("click", (e) => ...) 
-      
-      // --- Auth Functions ---
-      function updateHeader() {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user) {
-          // Since menuLogin/menuLogout/menuProfile are now <li> or <button> inside a drawer:
-          menuLogin.style.display = "none";
-          menuProfile.style.display = "block";
-          menuLogout.style.display = "block";
-        } else {
-          menuLogin.style.display = "block";
-          menuProfile.style.display = "none";
-          menuLogout.style.display = "none";
-        }
-      }
-      updateHeader();
-
-      // FIX: LOGIN BUTTON HANDLER
-      // 1. Closes the drawer.
-      // 2. Shows the modal.
-      // 3. Hides the search bar (Fixes glowing box).
-      menuLogin.addEventListener("click", () => { 
-          closeDrawer(); // Close the menu drawer first
-          loginModal.style.display = "flex"; 
-          hideSearchBar(); 
-      });
-      
-      // FIX: MODAL CLOSE HANDLERS
-      closeLoginModal.addEventListener("click", () => {
-          loginModal.style.display = "none";
-          showSearchBar(); // Show search bar again
-      });
-      loginModal.addEventListener("click", (e) => { 
-          if (e.target === loginModal) {
-              loginModal.style.display = "none"; 
-              showSearchBar(); // Show search bar again
-          }
-      });
-
-      // LOGOUT HANDLER (Corrected to close drawer/menu)
-      menuLogout.addEventListener("click", () => {
-        localStorage.removeItem("user");
-        updateHeader();
-        closeDrawer(); // Also close the drawer on logout
-      });
-
-      // --- Login Form Submission (Kept Unchanged) ---
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        try {
-          const res = await fetch("/api/auth", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "login", email, password }),
-          });
-          const data = await res.json();
-          if (!res.ok) return alert(data.error || "Login failed");
-          localStorage.setItem("user", JSON.stringify(data.user));
-          loginModal.style.display = "none";
-          window.location.href = "profile.html";
-        } catch { alert("Network error."); }
-      });
-
-      // Load ads (Kept Unchanged)
-      async function loadPublicAds() {
-        try {
-          const res = await fetch("/api/ads?public=true");
-          const ads = await res.json();
-          const container = document.getElementById("publicAds");
-          container.innerHTML = Array.isArray(ads) && ads.length ?
-            ads.map(a => `<div class='ad-card'><h3>${a.title}</h3><p>${a.description}</p></div>`).join("") :
-            "<p>No listings available.</p>";
-        } catch {
-          document.getElementById("publicAds").innerHTML = "<p>Failed to load listings.</p>";
-        }
-      }
-      loadPublicAds();
-    });
-  </script>-->
-
-
 </body>
 </html>
