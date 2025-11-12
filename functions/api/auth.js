@@ -2,11 +2,12 @@
 export async function onRequest(context) {
   const { request, env } = context;
   const NDB = env.NDB;
+  const SECRET = env.my_secret;
 
   const CORS_HEADERS = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   };
 
@@ -14,7 +15,7 @@ export async function onRequest(context) {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
-  // --- Helpers ---
+  // --- Helper functions ---
   async function hashPassword(str) {
     const enc = new TextEncoder();
     const data = enc.encode(String(str));
@@ -27,35 +28,91 @@ export async function onRequest(context) {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const bytes = new Uint8Array(len);
     crypto.getRandomValues(bytes);
-    let out = "";
-    for (let i = 0; i < len; i++) out += chars[bytes[i] % chars.length];
-    return out;
+    return Array.from(bytes).map(b => chars[b % chars.length]).join("");
   }
 
-  // --- Parse request ---
+  // --- JWT handling ---
+  async function generateJWT(payload) {
+    const header = { alg: "HS256", typ: "JWT" };
+    const encoder = new TextEncoder();
+
+    const base64url = (obj) =>
+      btoa(JSON.stringify(obj))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+
+    const headerEnc = base64url(header);
+    const payloadEnc = base64url(payload);
+    const unsignedToken = `${headerEnc}.${payloadEnc}`;
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(SECRET),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(unsignedToken));
+    const sigBytes = new Uint8Array(signature);
+    const sigB64 = btoa(String.fromCharCode(...sigBytes))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+    return `${unsignedToken}.${sigB64}`;
+  }
+
+  async function verifyJWT(token) {
+    try {
+      const [headerB64, payloadB64, sigB64] = token.split(".");
+      if (!headerB64 || !payloadB64 || !sigB64) return null;
+
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        "raw",
+        encoder.encode(SECRET),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["verify"]
+      );
+
+      const unsignedToken = `${headerB64}.${payloadB64}`;
+      const sigBin = Uint8Array.from(atob(sigB64.replace(/-/g, "+").replace(/_/g, "/")), c =>
+        c.charCodeAt(0)
+      );
+
+      const valid = await crypto.subtle.verify(
+        "HMAC",
+        key,
+        sigBin,
+        encoder.encode(unsignedToken)
+      );
+      if (!valid) return null;
+
+      const payload = JSON.parse(atob(payloadB64.replace(/-/g, "+").replace(/_/g, "/")));
+      if (Date.now() / 1000 > payload.exp) return null;
+      return payload;
+    } catch {
+      return null;
+    }
+  }
+
+  // --- Parse request body ---
   let body = {};
   try {
     if (["POST", "PUT"].includes(request.method)) {
-      body = await request.json().catch(() => ({}));
+      body = await request.json();
     }
   } catch {
     body = {};
   }
 
   const url = new URL(request.url);
-  let action = (body.action || url.searchParams.get("action") || "").toString().toLowerCase();
-  const pathname = url.pathname || "";
+  let action = (body.action || url.searchParams.get("action") || "").toLowerCase();
   if (!action) {
-    if (pathname.endsWith("/signup")) action = "signup";
-    else if (pathname.endsWith("/login")) action = "login";
-    else if (pathname.endsWith("/forgot") || pathname.endsWith("/recover")) action = "forgot";
-  }
-
-  if (!action) {
-    return new Response(
-      JSON.stringify({ error: "Missing action. Use ?action=signup|login|forgot or body.action." }),
-      { status: 400, headers: CORS_HEADERS }
-    );
+    return new Response(JSON.stringify({ error: "Missing action" }), {
+      status: 400,
+      headers: CORS_HEADERS,
+    });
   }
 
   // ---------------------------
@@ -132,26 +189,17 @@ export async function onRequest(context) {
 
       const hashed = await hashPassword(password);
       const stored = user.password || "";
-      const isHashedMatch = hashed === stored;
-      const isPlainMatch = password === stored; // legacy
-
-      if (!isHashedMatch && !isPlainMatch) {
+      const valid = hashed === stored || password === stored;
+      if (!valid) {
         return new Response(JSON.stringify({ error: "Invalid credentials" }), {
           status: 401,
           headers: CORS_HEADERS,
         });
       }
 
-      // Upgrade plaintext to hashed if needed
-      if (isPlainMatch && !isHashedMatch) {
-        try {
-          await NDB.prepare("UPDATE users SET password = ? WHERE id = ?")
-            .bind(hashed, user.id)
-            .run();
-        } catch (e) {
-          console.error("Password upgrade failed:", e);
-        }
-      }
+      // create JWT
+      const exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60; // 24h
+      const token = await generateJWT({ id: user.id, email: user.email, exp });
 
       const safeUser = {
         id: user.id,
@@ -162,7 +210,7 @@ export async function onRequest(context) {
       };
 
       return new Response(
-        JSON.stringify({ message: "Login successful", user: safeUser }),
+        JSON.stringify({ message: "Login successful", token, user: safeUser }),
         { status: 200, headers: CORS_HEADERS }
       );
     } catch (err) {
@@ -201,8 +249,7 @@ export async function onRequest(context) {
       if (body.recovery_code && body.new_password) {
         const provided = String(body.recovery_code);
         const providedHash = await hashPassword(provided);
-
-        if (!user.recovery_code || providedHash !== user.recovery_code) {
+        if (providedHash !== user.recovery_code) {
           return new Response(JSON.stringify({ error: "Invalid recovery code" }), {
             status: 401,
             headers: CORS_HEADERS,
