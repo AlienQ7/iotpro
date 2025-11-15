@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scheduler</title>
   <link rel="stylesheet" href="index.css" />
-  <style>
-  </style>
 </head>
 <body>
 <header class="header-bar">
@@ -24,18 +22,17 @@
 
   <center><h3>User Menu</h3></center>
   <ul class="user-menu-list">
-    <!-- Login (visible when logged out) -->
+
     <li id="menuLogin-wrapper">
       <button id="menuLogin" style="background:none; border:none; color:var(--neon-gold); font-size:1rem; padding:0; cursor:pointer; display:block; width:100%; text-align:left;">
         Login
       </button>
     </li>
 
-    <!-- Profile (visible when logged in) -->
     <li id="menuProfile" style="display:none;">
       <a href="profile.html">Profile</a>
     </li>
-    <!-- Logout (visible when logged in) -->
+
     <li id="menuLogout" style="display:none; text-color: gold">Logout</li>
     <li><a href="use.html">How to Use</a></li>
     <li><a href="#about-section">About</a></li>
@@ -44,11 +41,13 @@
 </div>
 
 <div id="overlay" class="overlay"></div>
-    <main id="mainContent">
+
+<main id="mainContent">
+
   <section class="info-section">
     <h2 id="iot-heading" style="color:#00ffcc;">Welcome to <b style="color:#0ff;">ScheDuler IoT Control</b></h2>
     <p class="tagline" style="color:#ccc;">Your <b style="color:#0ff;">secure</b>, <b style="color:#0ff;">centralized</b> platform for managing connected devices.</p><br>
-   <center><p class="tagline" style="color:red;">(Do not Enter<b style="color:#0ff;"> Real Info</b> <b style="color:#0ff;">as it's a</b> demo project.)</p></center><br>
+    <center><p class="tagline" style="color:red;">(Do not Enter<b style="color:#0ff;"> Real Info</b> <b style="color:#0ff;">as it's a</b> demo project.)</p></center><br>
   </section>
 
   <section class="info-card-container login-callout-section">
@@ -96,34 +95,45 @@
       </p>
     </div>
   </section>
-</main>
-  <footer class="footer">
-    <p><a href="#about-section" style="color:#fbbf24; margin-right:10px;">About</a> | <a href="#" style="color:#fbbf24;">Some List</a></p>
-    <p>&copy; 2025 Scheduler</p>
-  </footer>
 
-  <div id="loginModal" class="modal">
-    <div class="modal-card">
-       <h2 id="closeLoginModal" style="position: absolute; top: -20px; right: -25px; font-size: 1.8rem; cursor: pointer;"></h2>
+</main>
+
+<footer class="footer">
+  <p><a href="#about-section" style="color:#fbbf24; margin-right:10px;">About</a> | <a href="#" style="color:#fbbf24;">Some List</a></p>
+  <p>&copy; 2025 Scheduler</p>
+</footer>
+
+
+<!-- ===================== LOGIN MODAL ===================== -->
+<div id="loginModal" class="modal">
+  <div class="modal-card">
+     <h2 id="closeLoginModal" style="position: absolute; top: -20px; right: -25px; font-size: 1.8rem; cursor: pointer;">&times;</h2>
 
       <form id="loginForm">
-  <input type="email" id="email" placeholder="Email" required />
 
-  <div class="password-container">
-    <input type="password" id="password" required placeholder="Password" />
-    <span class="toggle-password" onclick="togglePassword('password', this)">🔍︎</span>
-  </div>
+        <input type="email" id="email" placeholder="Email" required />
 
-  <button type="submit">Login</button>
-</form>
+        <div class="password-container">
+          <input type="password" id="password" required placeholder="Password" />
+          <span class="toggle-password" onclick="togglePassword('password', this)">🔍︎</span>
+        </div>
+
+        <button type="submit">Login</button>
+
+      </form>
+
       <p style="text-align:center;margin-top:8px;">
         <a href="forgot-password.html" style="color:#4af;">Forgot password?</a>
       </p>
       <p style="text-align:center;margin-top:6px;">Don’t have an account? <a href="signup.html" style="color:#4af;">Sign up</a></p>
-    </div>
   </div>
+</div>
+
+
+<!-- ===================== ALL SCRIPT ===================== -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
   const categoryBtn = document.getElementById("categoryBtn");
   const categoryDrawer = document.getElementById("categoryDrawer");
   const closeCategory = document.getElementById("closeCategory");
@@ -138,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.getElementById("closeLoginModal");
   const loginForm = document.getElementById("loginForm");
 
-  // --- Drawer Toggle Functions ---
+  // --- Drawer Toggle ---
   function openDrawer() {
     categoryDrawer.classList.add("open");
     overlay.classList.add("show");
@@ -152,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   closeCategory.addEventListener("click", closeDrawer);
   overlay.addEventListener("click", closeDrawer);
 
-  // --- Auth Functions ---
+  // --- Auth Header ---
   function updateHeader() {
     const token = localStorage.getItem("token");
     if (token) {
@@ -169,24 +179,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   updateHeader();
 
-  // --- LOGIN MODAL ---
+  // --- Login Modal ---
   const openLoginModal = () => {
     closeDrawer();
     loginModal.style.display = "flex";
   };
   if (menuLogin) menuLogin.addEventListener("click", openLoginModal);
-  if (mainLoginBtn) mainLoginBtn.addEventListener("click", openLoginModal); 
-  closeLoginModal.addEventListener("click", () => (loginModal.style.display = "none"));
-  loginModal.addEventListener("click", (e) => { if (e.target === loginModal) loginModal.style.display = "none"; });
+  if (mainLoginBtn) mainLoginBtn.addEventListener("click", openLoginModal);
 
-  // --- LOGOUT ---
+  closeLoginModal.addEventListener("click", () => (loginModal.style.display = "none"));
+  loginModal.addEventListener("click", (e) => {
+    if (e.target === loginModal) loginModal.style.display = "none";
+  });
+
+  // --- Logout ---
   menuLogout.addEventListener("click", () => {
     localStorage.removeItem("token");
     updateHeader();
     closeDrawer();
   });
 
-  // --- LOGIN FORM SUBMIT ---
+  // --- Login Submit ---
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("email").value.trim();
@@ -201,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       if (!res.ok) return alert(data.error || "Login failed");
 
-      // Store JWT token
       localStorage.setItem("token", data.token);
       loginModal.style.display = "none";
       window.location.href = "profile.html";
@@ -209,7 +221,23 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Network error.");
     }
   });
+
+  // --- PASSWORD SHOW / HIDE ---
+  window.togglePassword = function (inputId, iconEl) {
+    const field = document.getElementById(inputId);
+    if (!field) return;
+
+    if (field.type === "password") {
+      field.type = "text";
+      iconEl.textContent = "🙈";
+    } else {
+      field.type = "password";
+      iconEl.textContent = "🔍︎";
+    }
+  };
+
 });
 </script>
+
 </body>
 </html>
