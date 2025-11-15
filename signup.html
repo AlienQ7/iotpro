@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Account | NagaDataLink</title>
+  <title>Create Account</title>
   <link rel="stylesheet" href="signup.css" />
 </head>
 <body>
@@ -14,12 +14,11 @@
       <p>Enter your details to create a new account.</p>
 
       <form id="signupForm">
-        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="text" id="name" placeholder="Enter Your Name" required />
         <input type="email" id="email" placeholder="Email" required />
-        <input type="tel" id="phone" placeholder="Phone (optional)" />
 
         <div class="password-container">
-          <input type="password" id="password" placeholder="Password" required />
+          <input type="password" id="password" placeholder="Password(8 character)" required />
           <span class="toggle-password" onclick="togglePassword('password', this)">🔍︎</span>
         </div>
 
@@ -54,10 +53,15 @@
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
       const confirmPassword = document.getElementById("confirmPassword").value.trim();
-      const phone = document.getElementById("phone").value.trim();
 
       if (password !== confirmPassword) {
         alert("❌ Passwords do not match!");
+        return;
+      }
+
+      // ✅ Password must be at least 8 characters
+      if (password.length < 8) {
+        alert("❌ Password must be at least 8 characters long!");
         return;
       }
 
@@ -68,8 +72,7 @@
           action: "signup",
           name,
           email,
-          password,
-          phone
+          password
         }),
       });
 
@@ -79,7 +82,6 @@
       if (res.ok) {
         const code = data.recovery_code;
 
-        // ✅ Success overlay (same design as forgot-password)
         const msg = document.createElement("div");
         msg.innerHTML = `
   <div style="
@@ -87,7 +89,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh; /* dynamic viewport height — fixes mobile centering issues */
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
