@@ -107,10 +107,15 @@
        <h2 id="closeLoginModal" style="position: absolute; top: -20px; right: -25px; font-size: 1.8rem; cursor: pointer;"></h2>
 
       <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" required placeholder="Password" />
-        <button type="submit">Login</button>
-      </form>
+  <input type="email" id="email" placeholder="Email" required />
+
+  <div class="password-container">
+    <input type="password" id="password" required placeholder="Password" />
+    <span class="toggle-password" onclick="togglePassword('password', this)">🔍︎</span>
+  </div>
+
+  <button type="submit">Login</button>
+</form>
       <p style="text-align:center;margin-top:8px;">
         <a href="forgot-password.html" style="color:#4af;">Forgot password?</a>
       </p>
